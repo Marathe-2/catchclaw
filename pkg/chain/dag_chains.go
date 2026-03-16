@@ -5,7 +5,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// BuildFullDAG creates the complete 49-chain DAG with dependencies and conditions
+// BuildFullDAG creates the complete 55-chain DAG with dependencies and conditions
 func BuildFullDAG(concurrency int, aggressive bool) *DAGChain {
 	dag := NewDAGChain(concurrency, aggressive)
 
@@ -514,6 +514,73 @@ func BuildFullDAG(concurrency int, aggressive bool) *DAGChain {
 		DependsOn: []int{15},
 		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
 			return exploit.RedactBypassCheck(t, exploit.RedactBypassConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	// === Level 2f: V4 Source-audit exploit chains ===
+	dag.AddNode(&ChainNode{
+		ID:        50,
+		Name:      "Link Template Injection",
+		Category:  "injection",
+		Severity:  "CRITICAL",
+		DependsOn: []int{0},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.LinkTemplateInjectCheck(t, exploit.LinkTemplateInjectConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        51,
+		Name:      "QMD Command Injection",
+		Category:  "rce",
+		Severity:  "CRITICAL",
+		DependsOn: []int{0},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.QMDCmdInjectCheck(t, exploit.QMDCmdInjectConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        52,
+		Name:      "OAuth Cross-Agent Token Theft",
+		Category:  "credential",
+		Severity:  "CRITICAL",
+		DependsOn: []int{19},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.OAuthTokenTheftCheck(t, exploit.OAuthTokenTheftConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        53,
+		Name:      "Exec Approvals TOCTOU Race",
+		Category:  "rce",
+		Severity:  "HIGH",
+		DependsOn: []int{7},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.ExecRaceTOCTOUCheck(t, exploit.ExecRaceTOCTOUConfig{Token: c.Token, Timeout: c.Timeout, Concurrency: 10})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        54,
+		Name:      "Memory Session Data Leak",
+		Category:  "disclosure",
+		Severity:  "HIGH",
+		DependsOn: []int{0},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.MemoryDataLeakCheck(t, exploit.MemoryDataLeakConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        55,
+		Name:      "Media Understanding SSRF",
+		Category:  "ssrf",
+		Severity:  "CRITICAL",
+		DependsOn: []int{1},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.MediaSSRFCheck(t, exploit.MediaSSRFConfig{Token: c.Token, Timeout: c.Timeout, CallbackURL: c.CallbackURL})
 		},
 	})
 

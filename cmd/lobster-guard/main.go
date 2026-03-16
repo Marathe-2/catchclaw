@@ -12,7 +12,10 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/audit"
 	"github.com/coff0xc/lobster-guard/pkg/auth"
 	"github.com/coff0xc/lobster-guard/pkg/chain"
+	"github.com/coff0xc/lobster-guard/pkg/concurrent"
+	"github.com/coff0xc/lobster-guard/pkg/cve"
 	"github.com/coff0xc/lobster-guard/pkg/discovery"
+	"github.com/coff0xc/lobster-guard/pkg/fuzzer"
 	"github.com/coff0xc/lobster-guard/pkg/interactive"
 	"github.com/coff0xc/lobster-guard/pkg/mcp"
 	"github.com/coff0xc/lobster-guard/pkg/recon"
@@ -45,17 +48,21 @@ var (
 	flagDiscQuery string
 	flagDiscMax   int
 	flagDiscOut    string
-	flagAggressive bool
-	flagDAG        bool
-	flagChainID    int
-	flagAIAnalyze  bool
+	flagAggressive      bool
+	flagUltraAggressive bool
+	flagDAG             bool
+	flagChainID         int
+	flagAIAnalyze       bool
+	flagWorkers         int
+	flagRateLimit       float64
+	flagFuzzCategories  string
 )
 
 func main() {
 	rootCmd := &cobra.Command{
 		Use:   "lobster-guard",
-		Short: "OpenClaw Security Assessment Tool",
-		Long:  "LobsterGuard — automated security scanner for public OpenClaw instances",
+		Short: "OpenClaw Security Assessment Tool v4.0.0",
+		Long:  "LobsterGuard v4.0.0 — 55-chain DAG, AI-powered fuzzing, CVE database, high-concurrency engine",
 	}
 
 	scanCmd := &cobra.Command{
@@ -87,18 +94,32 @@ func main() {
 	addCommonFlags(reconCmd)
 	reconCmd.Flags().StringVar(&flagToken, "token", "", "Gateway token for authenticated enum")
 
-	exploitCmd := &cobra.Command{Use: "exploit", Short: "49-chain OpenClaw attack suite (DAG-based v3)", RunE: runExploit}
+	exploitCmd := &cobra.Command{Use: "exploit", Short: "55-chain OpenClaw attack suite (DAG-based v4)", RunE: runExploit}
 	addCommonFlags(exploitCmd)
 	exploitCmd.Flags().StringVar(&flagToken, "token", "", "Gateway token (required for most tests)")
 	exploitCmd.Flags().StringVar(&flagCallback, "callback", "", "OOB callback URL for SSRF detection")
 	exploitCmd.Flags().StringVar(&flagHookToken, "hook-token", "", "Hook-specific token")
 	exploitCmd.Flags().StringVar(&flagHookPath, "hook-path", "/hooks", "Hook base path")
 	exploitCmd.Flags().BoolVar(&flagAggressive, "aggressive", false, "Aggressive mode: max concurrency, no delays")
+	exploitCmd.Flags().BoolVar(&flagUltraAggressive, "ultra-aggressive", false, "Ultra-aggressive: 200 workers, no rate limit, all chains")
+	exploitCmd.Flags().IntVar(&flagWorkers, "workers", 0, "Worker pool size for concurrent engine (0 = auto)")
+	exploitCmd.Flags().Float64Var(&flagRateLimit, "rate-limit", 0, "Max requests per second (0 = unlimited)")
 	exploitCmd.Flags().BoolVar(&flagDAG, "dag", true, "Use DAG-based chain execution (v2)")
 	exploitCmd.Flags().IntVar(&flagChainID, "chain-id", -1, "Run single chain by ID (-1 = all)")
 	exploitCmd.Flags().BoolVar(&flagAIAnalyze, "ai-analyze", false, "Use AI to analyze results (requires ANTHROPIC_API_KEY or OPENAI_API_KEY)")
 
 	rootCmd.AddCommand(scanCmd, fpCmd, authCmd, auditCmd, reconCmd, exploitCmd)
+
+	// v4: Fuzz command
+	fuzzCmd := &cobra.Command{Use: "fuzz", Short: "AI-powered fuzzing (XSS/SQLi/SSRF/CMDi/Prompt Injection)", RunE: runFuzz}
+	addCommonFlags(fuzzCmd)
+	fuzzCmd.Flags().StringVar(&flagToken, "token", "", "Gateway token")
+	fuzzCmd.Flags().StringVar(&flagFuzzCategories, "categories", "", "Comma-separated: xss,sqli,ssrf,cmdi,prompt_inject")
+	rootCmd.AddCommand(fuzzCmd)
+
+	// v4: CVE lookup command
+	cveCmd := &cobra.Command{Use: "cve", Short: "Search CVE database for OpenClaw/open-webui vulnerabilities", RunE: runCVE}
+	rootCmd.AddCommand(cveCmd)
 
 	// MCP Server command
 	mcpCmd := &cobra.Command{
@@ -464,15 +485,44 @@ func runExploit(cmd *cobra.Command, args []string) error {
 
 		var findings []utils.Finding
 		if flagDAG {
-			// v2: DAG-based execution
 			concurrency := flagConcurrency
 			if concurrency < 1 {
 				concurrency = 5
 			}
+			if flagUltraAggressive {
+				concurrency = 200
+			} else if flagAggressive && concurrency < 20 {
+				concurrency = 20
+			}
+
 			if flagChainID >= 0 {
-				// Single chain execution
-				dag := chain.BuildFullDAG(concurrency, flagAggressive)
+				dag := chain.BuildFullDAG(concurrency, flagAggressive || flagUltraAggressive)
 				findings = dag.ExecuteSingle(target, chainCfg, flagChainID)
+			} else if flagUltraAggressive || flagWorkers > 0 {
+				// v4: Use concurrent engine for ultra-aggressive or explicit workers
+				workers := flagWorkers
+				if workers <= 0 {
+					workers = concurrency
+				}
+				engine := concurrent.NewEngine(workers, flagRateLimit)
+				engine.Timeout = timeout
+				dag := chain.BuildFullDAG(workers, true)
+				var tasks []concurrent.ScanTask
+				for _, node := range dag.Nodes {
+					n := node
+					tasks = append(tasks, concurrent.ScanTask{
+						ID:       n.ID,
+						Name:     n.Name,
+						Target:   target,
+						Token:    flagToken,
+						ChainID:  n.ID,
+						Priority: 1,
+						Execute: func(t utils.Target, token string) []utils.Finding {
+							return n.Execute(t, chainCfg)
+						},
+					})
+				}
+				findings = engine.Run(tasks)
 			} else {
 				findings = chain.RunDAGChain(target, chainCfg, concurrency, flagAggressive)
 			}
@@ -541,5 +591,81 @@ func runDiscover(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Printf("\n[*] Targets saved to %s — use with: lobster-guard scan -T %s\n", flagDiscOut, flagDiscOut)
 	}
+	return nil
+}
+
+// --- fuzz: AI-powered fuzzing (v4) ---
+func runFuzz(cmd *cobra.Command, args []string) error {
+	utils.Banner()
+	targets, err := resolveTargets()
+	if err != nil {
+		return err
+	}
+	timeout := time.Duration(flagTimeout) * time.Second
+
+	for _, target := range targets {
+		analyzer := ai.NewAnalyzer()
+		f := fuzzer.NewAIFuzzer(target, flagToken, analyzer)
+		f.Timeout = timeout
+
+		var categories []string
+		if flagFuzzCategories != "" {
+			for _, c := range strings.Split(flagFuzzCategories, ",") {
+				c = strings.TrimSpace(c)
+				if c != "" {
+					categories = append(categories, c)
+				}
+			}
+		}
+
+		results := f.Fuzz(nil, categories)
+		findings := fuzzer.Findings(results)
+
+		fmt.Printf("\n[*] Fuzz complete: %d tests, %d vulns found\n", len(results), len(findings))
+		for _, finding := range findings {
+			fmt.Printf("  [+] %s: %s\n", finding.Severity, finding.Title)
+		}
+	}
+	return nil
+}
+
+// --- cve: CVE database lookup (v4) ---
+func runCVE(cmd *cobra.Command, args []string) error {
+	utils.Banner()
+	db := cve.NewDatabase()
+
+	keyword := ""
+	if len(args) > 0 {
+		keyword = strings.Join(args, " ")
+	}
+
+	var results []cve.CVEEntry
+	if keyword != "" {
+		results = db.Search(keyword)
+	} else {
+		results = db.All()
+	}
+
+	fmt.Printf("\n[*] CVE Database: %d entries\n\n", db.Count())
+	for _, e := range results {
+		exploit := ""
+		if e.ExploitAvailable {
+			exploit = " [EXPLOIT]"
+		}
+		chains := ""
+		if len(e.ChainIDs) > 0 {
+			chainStrs := make([]string, len(e.ChainIDs))
+			for i, id := range e.ChainIDs {
+				chainStrs[i] = fmt.Sprintf("#%d", id)
+			}
+			chains = fmt.Sprintf(" → chains: %s", strings.Join(chainStrs, ","))
+		}
+		fmt.Printf("  %-18s [%s] CVSS %.1f%s%s\n    %s\n\n",
+			e.ID, e.Severity, e.CVSS, exploit, chains,
+			utils.Truncate(e.Description, 120))
+	}
+
+	summary := db.Summary()
+	fmt.Printf("[*] Summary: %v total, %v exploitable\n", summary["total"], summary["exploitable"])
 	return nil
 }

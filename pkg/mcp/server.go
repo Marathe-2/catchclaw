@@ -6,10 +6,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/coff0xc/lobster-guard/pkg/ai"
 	"github.com/coff0xc/lobster-guard/pkg/chain"
+	"github.com/coff0xc/lobster-guard/pkg/concurrent"
+	"github.com/coff0xc/lobster-guard/pkg/cve"
 	"github.com/coff0xc/lobster-guard/pkg/exploit"
+	"github.com/coff0xc/lobster-guard/pkg/fuzzer"
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
@@ -53,7 +58,7 @@ type ToolDef struct {
 func NewServer() *Server {
 	s := &Server{
 		tools:   make(map[string]ToolHandler),
-		version: "2.0.0",
+		version: "4.0.0",
 	}
 	s.registerTools()
 	return s
@@ -68,6 +73,12 @@ func (s *Server) registerTools() {
 	s.tools["lobster_discover"] = s.handleDiscover
 	s.tools["lobster_report"] = s.handleReport
 	s.tools["lobster_ai_analyze"] = s.handleAIAnalyze
+	// v4 新工具
+	s.tools["lobster_cve_lookup"] = s.handleCVELookup
+	s.tools["lobster_fuzz"] = s.handleFuzz
+	s.tools["lobster_concurrent_scan"] = s.handleConcurrentScan
+	s.tools["lobster_chain_list"] = s.handleChainList
+	s.tools["lobster_vuln_stats"] = s.handleVulnStats
 }
 
 // Run starts the MCP server on stdio (blocking)
@@ -204,6 +215,52 @@ func (s *Server) toolDefinitions() []ToolDef {
 				},
 				"required": []string{"findings"},
 			}},
+		// v4 新工具定义
+		{Name: "lobster_cve_lookup", Description: "Search CVE database for OpenClaw/open-webui vulnerabilities",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"keyword":  map[string]string{"type": "string", "description": "Search keyword (CVE ID, description, or severity)"},
+					"severity": map[string]string{"type": "string", "description": "Filter by severity: CRITICAL, HIGH, MEDIUM, LOW"},
+					"online":   map[string]string{"type": "boolean", "description": "Fetch latest CVEs from NVD (default: false)"},
+				},
+			}},
+		{Name: "lobster_fuzz", Description: "AI-powered fuzzing against OpenClaw endpoints (XSS, SQLi, SSRF, CMDi, Prompt Injection)",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"target":     map[string]string{"type": "string", "description": "Target host:port"},
+					"token":      map[string]string{"type": "string", "description": "Auth token"},
+					"categories": map[string]string{"type": "string", "description": "Comma-separated: xss,sqli,ssrf,cmdi,prompt_inject"},
+					"endpoints":  map[string]string{"type": "string", "description": "Comma-separated endpoint paths to fuzz"},
+				},
+				"required": []string{"target"},
+			}},
+		{Name: "lobster_concurrent_scan", Description: "High-concurrency scan with worker pool, rate limiting, and priority scheduling",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"target":     map[string]string{"type": "string", "description": "Target host:port"},
+					"token":      map[string]string{"type": "string", "description": "Auth token"},
+					"workers":    map[string]string{"type": "integer", "description": "Max concurrent workers (default: 50)"},
+					"rate_limit": map[string]string{"type": "number", "description": "Max requests per second (0 = unlimited)"},
+				},
+				"required": []string{"target"},
+			}},
+		{Name: "lobster_chain_list", Description: "List all 49+ attack chains with their categories, dependencies, and severity",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"category": map[string]string{"type": "string", "description": "Filter by category (e.g. auth, ssrf, injection, rce)"},
+				},
+			}},
+		{Name: "lobster_vuln_stats", Description: "Get vulnerability statistics — CVE counts, severity distribution, exploit coverage",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"include_cve": map[string]string{"type": "boolean", "description": "Include CVE database stats (default: true)"},
+				},
+			}},
 	}
 }
 
@@ -331,4 +388,250 @@ func countSev(findings []utils.Finding, sev utils.Severity) int {
 		}
 	}
 	return c
+}
+
+// --- v4 新 Tool Handlers ---
+
+func (s *Server) handleCVELookup(params json.RawMessage) (interface{}, error) {
+	var p struct {
+		Keyword  string `json:"keyword"`
+		Severity string `json:"severity"`
+		Online   bool   `json:"online"`
+	}
+	if err := json.Unmarshal(params, &p); err != nil {
+		return nil, fmt.Errorf("invalid params: %w", err)
+	}
+
+	db := cve.NewDatabase()
+
+	// 在线获取
+	if p.Online {
+		online, err := db.FetchOnline("open-webui")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[CVE] Online fetch failed: %v\n", err)
+		} else {
+			return map[string]interface{}{
+				"source":  "nvd_online",
+				"results": online,
+				"total":   len(online),
+			}, nil
+		}
+	}
+
+	// 本地搜索
+	var results []cve.CVEEntry
+	if p.Severity != "" {
+		results = db.SearchBySeverity(p.Severity)
+	} else {
+		results = db.Search(p.Keyword)
+	}
+
+	return map[string]interface{}{
+		"source":  "builtin",
+		"results": results,
+		"total":   len(results),
+		"summary": db.Summary(),
+	}, nil
+}
+
+func (s *Server) handleFuzz(params json.RawMessage) (interface{}, error) {
+	var p struct {
+		Target     string `json:"target"`
+		Token      string `json:"token"`
+		Categories string `json:"categories"`
+		Endpoints  string `json:"endpoints"`
+	}
+	if err := json.Unmarshal(params, &p); err != nil {
+		return nil, fmt.Errorf("invalid params: %w", err)
+	}
+
+	target, err := utils.ParseTarget(p.Target)
+	if err != nil {
+		return nil, fmt.Errorf("invalid target: %w", err)
+	}
+
+	analyzer := ai.NewAnalyzer()
+	f := fuzzer.NewAIFuzzer(target, p.Token, analyzer)
+
+	var categories []string
+	if p.Categories != "" {
+		for _, c := range splitTrim(p.Categories, ",") {
+			categories = append(categories, c)
+		}
+	}
+	var endpoints []string
+	if p.Endpoints != "" {
+		for _, e := range splitTrim(p.Endpoints, ",") {
+			endpoints = append(endpoints, e)
+		}
+	}
+
+	results := f.Fuzz(endpoints, categories)
+	findings := fuzzer.Findings(results)
+
+	return map[string]interface{}{
+		"target":       p.Target,
+		"total_tests":  len(results),
+		"vulns_found":  len(findings),
+		"findings":     findings,
+		"scan_version": s.version,
+	}, nil
+}
+
+func (s *Server) handleConcurrentScan(params json.RawMessage) (interface{}, error) {
+	var p struct {
+		Target    string  `json:"target"`
+		Token     string  `json:"token"`
+		Workers   int     `json:"workers"`
+		RateLimit float64 `json:"rate_limit"`
+	}
+	if err := json.Unmarshal(params, &p); err != nil {
+		return nil, fmt.Errorf("invalid params: %w", err)
+	}
+
+	target, err := utils.ParseTarget(p.Target)
+	if err != nil {
+		return nil, fmt.Errorf("invalid target: %w", err)
+	}
+
+	workers := p.Workers
+	if workers <= 0 {
+		workers = 50
+	}
+
+	engine := concurrent.NewEngine(workers, p.RateLimit)
+	engine.Timeout = 20 * time.Second
+
+	// 构建扫描任务: 为每个 DAG chain 创建一个 ScanTask
+	dag := chain.BuildFullDAG(workers, true)
+	var tasks []concurrent.ScanTask
+	for i, node := range dag.Nodes {
+		n := node // 捕获
+		tasks = append(tasks, concurrent.ScanTask{
+			ID:       n.ID,
+			Name:     n.Name,
+			Target:   target,
+			Token:    p.Token,
+			ChainID:  n.ID,
+			Priority: chainPriority(n.Category),
+			Execute: func(t utils.Target, token string) []utils.Finding {
+				cfg := chain.ChainConfig{Token: token, Timeout: 15 * time.Second}
+				return n.Execute(t, cfg)
+			},
+		})
+		_ = i
+	}
+
+	findings := engine.Run(tasks)
+
+	return map[string]interface{}{
+		"target":       p.Target,
+		"workers":      workers,
+		"rate_limit":   p.RateLimit,
+		"total_chains": len(tasks),
+		"findings":     findings,
+		"total":        len(findings),
+		"critical":     countSev(findings, utils.SevCritical),
+		"high":         countSev(findings, utils.SevHigh),
+		"medium":       countSev(findings, utils.SevMedium),
+		"scan_version": s.version,
+	}, nil
+}
+
+func (s *Server) handleChainList(params json.RawMessage) (interface{}, error) {
+	var p struct {
+		Category string `json:"category"`
+	}
+	if params != nil {
+		json.Unmarshal(params, &p)
+	}
+
+	dag := chain.BuildFullDAG(1, false)
+
+	type chainInfo struct {
+		ID        int    `json:"id"`
+		Name      string `json:"name"`
+		Category  string `json:"category"`
+		Severity  string `json:"severity"`
+		DependsOn []int  `json:"depends_on"`
+	}
+
+	var chains []chainInfo
+	for _, node := range dag.Nodes {
+		if p.Category != "" && node.Category != p.Category {
+			continue
+		}
+		chains = append(chains, chainInfo{
+			ID:        node.ID,
+			Name:      node.Name,
+			Category:  node.Category,
+			Severity:  node.Severity,
+			DependsOn: node.DependsOn,
+		})
+	}
+
+	return map[string]interface{}{
+		"total_chains": len(chains),
+		"chains":       chains,
+		"version":      s.version,
+	}, nil
+}
+
+func (s *Server) handleVulnStats(params json.RawMessage) (interface{}, error) {
+	var p struct {
+		IncludeCVE *bool `json:"include_cve"`
+	}
+	if params != nil {
+		json.Unmarshal(params, &p)
+	}
+
+	dag := chain.BuildFullDAG(1, false)
+
+	// 攻击链统计
+	categories := make(map[string]int)
+	for _, node := range dag.Nodes {
+		categories[node.Category]++
+	}
+
+	result := map[string]interface{}{
+		"version":      s.version,
+		"total_chains": len(dag.Nodes),
+		"categories":   categories,
+	}
+
+	// CVE 统计 (默认包含)
+	includeCVE := true
+	if p.IncludeCVE != nil {
+		includeCVE = *p.IncludeCVE
+	}
+	if includeCVE {
+		db := cve.NewDatabase()
+		result["cve_stats"] = db.Summary()
+	}
+
+	return result, nil
+}
+
+// --- 辅助函数 ---
+
+func splitTrim(s, sep string) []string {
+	var result []string
+	for _, part := range strings.Split(s, sep) {
+		trimmed := strings.TrimSpace(part)
+		if trimmed != "" {
+			result = append(result, trimmed)
+		}
+	}
+	return result
+}
+
+func chainPriority(category string) int {
+	switch category {
+	case "rce", "credential":
+		return 0 // 高优先级
+	case "injection", "ssrf", "auth":
+		return 1 // 中优先级
+	default:
+		return 2 // 低优先级
+	}
 }

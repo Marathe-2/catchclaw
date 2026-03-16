@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -12,10 +13,12 @@ import (
 
 // GatewayWSClient manages a WebSocket connection to OpenClaw Gateway
 type GatewayWSClient struct {
-	conn    *websocket.Conn
-	mu      sync.Mutex
-	msgID   int
-	timeout time.Duration
+	conn          *websocket.Conn
+	mu            sync.Mutex
+	msgID         int
+	timeout       time.Duration
+	authenticated bool   // true if challenge-response completed
+	challengeID   string // nonce from connect.challenge (empty if no challenge received)
 }
 
 // WSMessage represents a Gateway WS protocol message
@@ -58,13 +61,49 @@ func NewGatewayWSClientWithOrigin(target Target, token string, timeout time.Dura
 		return nil, fmt.Errorf("ws connect failed: %w", err)
 	}
 
-	return &GatewayWSClient{
+	client := &GatewayWSClient{
 		conn:    conn,
 		timeout: timeout,
-	}, nil
+	}
+
+	// Read the initial message — OpenClaw sends connect.challenge as the first frame
+	client.conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+	var initMsg map[string]interface{}
+	if err := client.conn.ReadJSON(&initMsg); err == nil {
+		// Check if this is a challenge message
+		if method, ok := initMsg["method"].(string); ok && method == "connect.challenge" {
+			// Extract challenge nonce from params
+			if params, ok := initMsg["params"].(map[string]interface{}); ok {
+				if nonce, ok := params["nonce"].(string); ok {
+					client.challengeID = nonce
+				} else if challenge, ok := params["challenge"].(string); ok {
+					client.challengeID = challenge
+				}
+			}
+			// Also check result field
+			if result, ok := initMsg["result"].(map[string]interface{}); ok {
+				if nonce, ok := result["nonce"].(string); ok && client.challengeID == "" {
+					client.challengeID = nonce
+				}
+			}
+			if client.challengeID == "" {
+				// Fallback: store raw params as challenge indicator
+				client.challengeID = "challenge-received"
+			}
+			fmt.Printf("  [ws] Challenge gate active (nonce: %s)\n", Truncate(client.challengeID, 16))
+		} else {
+			// No challenge — connection is directly authenticated
+			client.authenticated = true
+		}
+	}
+	// Reset deadline
+	client.conn.SetReadDeadline(time.Time{})
+
+	return client, nil
 }
 
-// Call sends a JSON-RPC style method call and waits for response
+// Call sends a JSON-RPC style method call and waits for response.
+// Returns error if the connection is behind a challenge gate and not authenticated.
 func (c *GatewayWSClient) Call(method string, params interface{}) (json.RawMessage, error) {
 	c.mu.Lock()
 	c.msgID++
@@ -98,17 +137,53 @@ func (c *GatewayWSClient) Call(method string, params interface{}) (json.RawMessa
 		if err := c.conn.ReadJSON(&resp); err != nil {
 			return nil, fmt.Errorf("ws read: %w", err)
 		}
+
+		// Filter out challenge messages — these are NOT method responses
+		if resp.Method == "connect.challenge" {
+			c.authenticated = false
+			// Extract nonce if not already captured
+			if c.challengeID == "" {
+				var challengeParams map[string]interface{}
+				if json.Unmarshal(resp.Params, &challengeParams) == nil {
+					if nonce, ok := challengeParams["nonce"].(string); ok {
+						c.challengeID = nonce
+					}
+				}
+			}
+			return nil, fmt.Errorf("challenge gate: server requires authentication (method %s blocked)", method)
+		}
+
 		if resp.ID == id {
 			if resp.Error != nil {
 				return nil, fmt.Errorf("rpc error %d: %s", resp.Error.Code, resp.Error.Message)
 			}
+			// Verify the result is not a challenge nonce masquerading as a response
+			if c.challengeID != "" && resp.Result != nil {
+				resultStr := string(resp.Result)
+				if strings.Contains(resultStr, c.challengeID) {
+					return nil, fmt.Errorf("challenge gate: response contains challenge nonce, not real data")
+				}
+			}
+			// Additional defense: detect challenge-like responses even without a known nonce.
+			// Some servers echo back a challenge object with matching ID but no Method field.
+			if resp.Result != nil {
+				resultStr := string(resp.Result)
+				if strings.Contains(resultStr, "connect.challenge") ||
+					strings.Contains(resultStr, `"nonce"`) ||
+					strings.Contains(resultStr, "challenge_required") {
+					c.authenticated = false
+					return nil, fmt.Errorf("challenge gate: response contains challenge indicators, not real data")
+				}
+			}
+			c.authenticated = true
 			return resp.Result, nil
 		}
 		// Skip push messages / events with different IDs
 	}
 }
 
-// CallRaw sends a raw JSON message and reads one response
+// CallRaw sends a raw JSON message and reads one response.
+// Filters out challenge messages.
 func (c *GatewayWSClient) CallRaw(data []byte) ([]byte, error) {
 	c.conn.SetWriteDeadline(time.Now().Add(c.timeout))
 	if err := c.conn.WriteMessage(websocket.TextMessage, data); err != nil {
@@ -116,7 +191,38 @@ func (c *GatewayWSClient) CallRaw(data []byte) ([]byte, error) {
 	}
 	c.conn.SetReadDeadline(time.Now().Add(c.timeout))
 	_, msg, err := c.conn.ReadMessage()
-	return msg, err
+	if err != nil {
+		return msg, err
+	}
+
+	// Check if response is a challenge message
+	var parsed map[string]interface{}
+	if json.Unmarshal(msg, &parsed) == nil {
+		if method, ok := parsed["method"].(string); ok && method == "connect.challenge" {
+			return nil, fmt.Errorf("challenge gate: raw call blocked by authentication requirement")
+		}
+	}
+	// Check if response contains only the challenge nonce
+	if c.challengeID != "" && strings.Contains(string(msg), c.challengeID) {
+		return nil, fmt.Errorf("challenge gate: response is challenge nonce, not real data")
+	}
+
+	return msg, nil
+}
+
+// IsAuthenticated returns true if the WS connection has passed the challenge gate
+func (c *GatewayWSClient) IsAuthenticated() bool {
+	return c.authenticated
+}
+
+// ChallengeID returns the challenge nonce if one was received, empty string otherwise
+func (c *GatewayWSClient) ChallengeID() string {
+	return c.challengeID
+}
+
+// HasChallengeGate returns true if the server sent a connect.challenge on connect
+func (c *GatewayWSClient) HasChallengeGate() bool {
+	return c.challengeID != ""
 }
 
 // Close closes the WebSocket connection

@@ -195,7 +195,9 @@ func resolveTargets() ([]utils.Target, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid target: %w", err)
 		}
-		t.UseTLS = flagTLS
+		if flagTLS {
+			t.UseTLS = true
+		}
 		targets = append(targets, t)
 	}
 	if flagTargets != "" {
@@ -215,7 +217,9 @@ func resolveTargets() ([]utils.Target, error) {
 				fmt.Printf("[!] Skipping invalid target: %s\n", line)
 				continue
 			}
-			t.UseTLS = flagTLS
+			if flagTLS {
+				t.UseTLS = true
+			}
 			targets = append(targets, t)
 		}
 	}

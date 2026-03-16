@@ -29,13 +29,24 @@ func NoAuthCheck(target utils.Target, timeout time.Duration) []utils.Finding {
 
 	switch {
 	case status == 200:
-		f := utils.NewFinding(tStr, "auth", "Gateway has NO authentication (auth.mode=none)",
-			utils.SevCritical,
-			"POST /v1/chat/completions succeeds without any Bearer token. Full operator access.")
-		f.Evidence = fmt.Sprintf("HTTP %d — response body: %s", status, truncate(string(body), 200))
-		f.Remediation = "Set gateway.auth.token or gateway.auth.password in openclaw.json"
-		findings = append(findings, f)
-		fmt.Printf("  [!!!] CRITICAL: No authentication! Full access confirmed.\n")
+		// Filter out non-API responses — redirect to OAuth/Cognito login page or SPA fallback
+		bodyStr := string(body)
+		if strings.Contains(bodyStr, "<title>Sign-in</title>") ||
+			strings.Contains(bodyStr, "cognito") ||
+			strings.Contains(bodyStr, "oauth2/authorize") ||
+			strings.Contains(bodyStr, "openclaw-app") ||
+			strings.Contains(bodyStr, "<!doctype html") ||
+			strings.Contains(bodyStr, "<!DOCTYPE html") {
+			fmt.Printf("  [~] /v1/chat/completions → 200 but response is HTML (redirect/SPA fallback, not real API)\n")
+		} else {
+			f := utils.NewFinding(tStr, "auth", "Gateway has NO authentication (auth.mode=none)",
+				utils.SevCritical,
+				"POST /v1/chat/completions succeeds without any Bearer token. Full operator access.")
+			f.Evidence = fmt.Sprintf("HTTP %d — response body: %s", status, truncate(string(body), 200))
+			f.Remediation = "Set gateway.auth.token or gateway.auth.password in openclaw.json"
+			findings = append(findings, f)
+			fmt.Printf("  [!!!] CRITICAL: No authentication! Full access confirmed.\n")
+		}
 
 	case status == 400:
 		// 400 means auth passed but request was malformed — still no auth

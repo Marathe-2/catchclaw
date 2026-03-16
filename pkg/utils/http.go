@@ -40,10 +40,20 @@ func (t Target) String() string {
 }
 
 // ParseTarget parses "host:port" string into Target
+// Supports URL format: https://host:port, http://host:port
+// Auto-detects TLS from scheme (https/wss) or port 443
 func ParseTarget(raw string) (Target, error) {
 	raw = strings.TrimSpace(raw)
-	// strip scheme if present
-	for _, prefix := range []string{"https://", "http://", "wss://", "ws://"} {
+	useTLS := false
+	// strip scheme if present, remember TLS
+	for _, prefix := range []string{"https://", "wss://"} {
+		if strings.HasPrefix(raw, prefix) {
+			raw = strings.TrimPrefix(raw, prefix)
+			useTLS = true
+			break
+		}
+	}
+	for _, prefix := range []string{"http://", "ws://"} {
 		if strings.HasPrefix(raw, prefix) {
 			raw = strings.TrimPrefix(raw, prefix)
 			break
@@ -53,13 +63,17 @@ func ParseTarget(raw string) (Target, error) {
 	if err != nil {
 		// try default port
 		host = raw
-		return Target{Host: host, Port: 18789}, nil
+		return Target{Host: host, Port: 18789, UseTLS: useTLS}, nil
 	}
 	port := 18789
 	if _, err := fmt.Sscanf(portStr, "%d", &port); err != nil {
 		port = 18789
 	}
-	return Target{Host: host, Port: port}, nil
+	// Auto-detect TLS from port
+	if port == 443 {
+		useTLS = true
+	}
+	return Target{Host: host, Port: port, UseTLS: useTLS}, nil
 }
 
 // SkipTLSVerify controls whether TLS certificate verification is skipped.

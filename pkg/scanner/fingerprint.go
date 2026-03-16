@@ -76,30 +76,45 @@ func Fingerprint(target utils.Target, timeout time.Duration) (*FingerprintResult
 	}
 
 	// 3. OpenAI compat endpoint probe
-	status, _, _, err := utils.DoRequest(client, "POST", base+"/v1/chat/completions",
+	status, chatBody, _, err := utils.DoRequest(client, "POST", base+"/v1/chat/completions",
 		map[string]string{"Content-Type": "application/json"},
 		strings.NewReader(`{"model":"probe","messages":[]}`))
 	if err == nil {
 		result.Endpoints = append(result.Endpoints, "/v1/chat/completions")
 		result.HasOpenAI = true
+		// Filter out non-API responses (OAuth redirect landing, SPA fallback)
+		isNonAPI := strings.Contains(string(chatBody), "<title>Sign-in</title>") ||
+			strings.Contains(string(chatBody), "cognito") ||
+			strings.Contains(string(chatBody), "oauth2/authorize") ||
+			strings.Contains(string(chatBody), "openclaw-app") ||
+			strings.Contains(string(chatBody), "<!doctype html") ||
+			strings.Contains(string(chatBody), "<!DOCTYPE html")
 		switch status {
 		case 200:
-			result.AuthMode = "none"
-			result.IsOpenClaw = true
-			f := utils.NewFinding(tStr, "fingerprint", "OpenAI compat endpoint accessible without auth",
-				utils.SevCritical, "/v1/chat/completions returns 200 without Bearer token")
-			f.Evidence = fmt.Sprintf("POST /v1/chat/completions → %d", status)
-			findings = append(findings, f)
-			fmt.Printf("  [!] /v1/chat/completions → %d (NO AUTH!)\n", status)
+			if isNonAPI {
+				fmt.Printf("  [~] /v1/chat/completions → 200 (HTML response — redirect/SPA fallback, not real API)\n")
+			} else {
+				result.AuthMode = "none"
+				result.IsOpenClaw = true
+				f := utils.NewFinding(tStr, "fingerprint", "OpenAI compat endpoint accessible without auth",
+					utils.SevCritical, "/v1/chat/completions returns 200 without Bearer token")
+				f.Evidence = fmt.Sprintf("POST /v1/chat/completions → %d", status)
+				findings = append(findings, f)
+				fmt.Printf("  [!] /v1/chat/completions → %d (NO AUTH!)\n", status)
+			}
 		case 400:
-			// 400 = authenticated but bad request body → auth.mode=none
-			result.AuthMode = "none"
-			result.IsOpenClaw = true
-			f := utils.NewFinding(tStr, "fingerprint", "OpenAI compat endpoint accessible without auth (400)",
-				utils.SevCritical, "/v1/chat/completions returns 400 (no auth required, bad body)")
-			f.Evidence = fmt.Sprintf("POST /v1/chat/completions → %d (no Bearer, got past auth)", status)
-			findings = append(findings, f)
-			fmt.Printf("  [!] /v1/chat/completions → %d (NO AUTH, bad body)\n", status)
+			if isNonAPI {
+				fmt.Printf("  [~] /v1/chat/completions → 400 (HTML response — not real API)\n")
+			} else {
+				// 400 = authenticated but bad request body → auth.mode=none
+				result.AuthMode = "none"
+				result.IsOpenClaw = true
+				f := utils.NewFinding(tStr, "fingerprint", "OpenAI compat endpoint accessible without auth (400)",
+					utils.SevCritical, "/v1/chat/completions returns 400 (no auth required, bad body)")
+				f.Evidence = fmt.Sprintf("POST /v1/chat/completions → %d (no Bearer, got past auth)", status)
+				findings = append(findings, f)
+				fmt.Printf("  [!] /v1/chat/completions → %d (NO AUTH, bad body)\n", status)
+			}
 		case 401, 403:
 			result.AuthMode = "token" // or password, will refine later
 			result.IsOpenClaw = true

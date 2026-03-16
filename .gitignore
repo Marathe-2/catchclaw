@@ -15,3 +15,11 @@ Thumbs.db
 
 # Go
 vendor/
+
+# Scan outputs & operational artifacts
+scan_*.json
+scan_results*.json
+targets*.txt
+
+# Internal audit/planning docs
+.audit/

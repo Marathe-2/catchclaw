@@ -127,24 +127,29 @@ func Fingerprint(target utils.Target, timeout time.Duration) (*FingerprintResult
 	// 4. Control UI config probe (primary fingerprint)
 	status, body, _, err := utils.DoRequest(client, "GET", base+"/__openclaw/control-ui-config.json", nil, nil)
 	if err == nil && status == 200 {
-		result.IsOpenClaw = true
-		result.Endpoints = append(result.Endpoints, "/__openclaw/control-ui-config.json")
-
-		// Extract version from control-ui-config
+		// Check if response is actual JSON config (not SPA fallback HTML)
 		var configResp map[string]interface{}
 		if json.Unmarshal(body, &configResp) == nil {
+			// Real JSON config — confirmed OpenClaw
+			result.IsOpenClaw = true
+			result.Endpoints = append(result.Endpoints, "/__openclaw/control-ui-config.json")
+
 			if v, ok := configResp["serverVersion"]; ok {
 				result.Version = fmt.Sprintf("%v", v)
 				fmt.Printf("  [+] OpenClaw detected via control-ui-config.json (version: %s)\n", result.Version)
 			}
-		}
 
-		f := utils.NewFinding(tStr, "fingerprint",
-			"OpenClaw control-ui-config.json exposed",
-			utils.SevInfo,
-			fmt.Sprintf("/__openclaw/control-ui-config.json accessible (version: %s)", result.Version))
-		f.Evidence = string(body)
-		findings = append(findings, f)
+			f := utils.NewFinding(tStr, "fingerprint",
+				"OpenClaw control-ui-config.json exposed",
+				utils.SevInfo,
+				fmt.Sprintf("/__openclaw/control-ui-config.json accessible (version: %s)", result.Version))
+			f.Evidence = string(body)
+			findings = append(findings, f)
+		} else if strings.Contains(string(body), "openclaw-app") || strings.Contains(string(body), "OpenClaw Control") {
+			// SPA fallback — HTML returned instead of JSON. Still confirms OpenClaw but not a real config leak.
+			result.IsOpenClaw = true
+			fmt.Printf("  [+] OpenClaw detected via SPA shell (control-ui-config.json returned HTML fallback)\n")
+		}
 	}
 
 	// 5. Canvas / A2UI probe (both single and double underscore for compatibility)

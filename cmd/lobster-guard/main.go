@@ -334,7 +334,10 @@ func runScan(cmd *cobra.Command, args []string) error {
 		}
 
 		// 6. Exploit verification — full OpenClaw attack chain
-		if !flagNoExploit && (activeToken != "" || fpResult.AuthMode == "none") {
+		// Always run exploit chains: zero-auth chains (ClawJacked, CORS, WS hijack,
+		// gatewayUrl SSRF, browser upload traversal) work without a token.
+		// Token-dependent chains will self-skip when token is empty.
+		if !flagNoExploit {
 			chainCfg := chain.ChainConfig{
 				Token:       activeToken,
 				HookToken:   flagHookToken,

@@ -212,6 +212,36 @@ func RunFullChain(target utils.Target, cfg ChainConfig) []utils.Finding {
 		Timeout: cfg.Timeout,
 	})...)
 
+	// Chain 56: ClawJacked token theft (CVE-2026-25253)
+	all = append(all, exploit.ClawJackedCheck(target, exploit.WSHijackConfig{
+		Token:   cfg.Token,
+		Timeout: cfg.Timeout,
+	})...)
+
+	// Chain 57: GatewayUrl override SSRF (CVE-2026-26322)
+	all = append(all, exploit.GatewayURLSSRFCheck(target, exploit.GatewayURLSSRFConfig{
+		Token:   cfg.Token,
+		Timeout: cfg.Timeout,
+	})...)
+
+	// Chain 58: Browser upload path traversal (CVE-2026-26329)
+	all = append(all, exploit.BrowserUploadTraversalCheck(target, exploit.BrowserUploadTraversalConfig{
+		Token:   cfg.Token,
+		Timeout: cfg.Timeout,
+	})...)
+
+	// Chain 59: macOS keychain command injection (CVE-2026-27487)
+	all = append(all, exploit.KeychainCmdInjectCheck(target, exploit.KeychainCmdInjectConfig{
+		Token:   cfg.Token,
+		Timeout: cfg.Timeout,
+	})...)
+
+	// Chain 60: Cron webhook SSRF (CVE-2026-27488)
+	all = append(all, exploit.CronWebhookSSRFCheck(target, exploit.CronWebhookSSRFConfig{
+		Token:   cfg.Token,
+		Timeout: cfg.Timeout,
+	})...)
+
 	fmt.Printf("\n[*] ═══ Attack chain complete: %d findings ═══\n", len(all))
 	return all
 }

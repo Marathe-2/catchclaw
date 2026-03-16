@@ -584,6 +584,62 @@ func BuildFullDAG(concurrency int, aggressive bool) *DAGChain {
 		},
 	})
 
+	// === Level 1e: CVE-2026 exploit chains ===
+	dag.AddNode(&ChainNode{
+		ID:        56,
+		Name:      "ClawJacked Token Theft",
+		Category:  "auth",
+		Severity:  "CRITICAL",
+		DependsOn: []int{17},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.ClawJackedCheck(t, exploit.WSHijackConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        57,
+		Name:      "GatewayUrl Override SSRF",
+		Category:  "ssrf",
+		Severity:  "MEDIUM",
+		DependsOn: []int{0},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.GatewayURLSSRFCheck(t, exploit.GatewayURLSSRFConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        58,
+		Name:      "Browser Upload Traversal",
+		Category:  "traversal",
+		Severity:  "MEDIUM",
+		DependsOn: []int{0},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.BrowserUploadTraversalCheck(t, exploit.BrowserUploadTraversalConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        59,
+		Name:      "Keychain Command Injection",
+		Category:  "rce",
+		Severity:  "HIGH",
+		DependsOn: []int{0},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.KeychainCmdInjectCheck(t, exploit.KeychainCmdInjectConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
+	dag.AddNode(&ChainNode{
+		ID:        60,
+		Name:      "Cron Webhook SSRF",
+		Category:  "ssrf",
+		Severity:  "HIGH",
+		DependsOn: []int{0},
+		Execute: func(t utils.Target, c ChainConfig) []utils.Finding {
+			return exploit.CronWebhookSSRFCheck(t, exploit.CronWebhookSSRFConfig{Token: c.Token, Timeout: c.Timeout})
+		},
+	})
+
 	return dag
 }
 

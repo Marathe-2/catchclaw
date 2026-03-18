@@ -34,3 +34,8 @@ tui-debug.log
 # Payload source files (embedded in binary via gen_assets.sh)
 nuclei-templates/
 rules/
+internal/assets/assets_gen.go
+
+# Payload source & generated registry (embedded via XOR in binary)
+payloads.yaml
+pkg/payload/registry_gen.go

@@ -9,38 +9,13 @@ import (
 	"time"
 
 	"github.com/coff0xc/lobster-guard/internal/assets"
+	"github.com/coff0xc/lobster-guard/pkg/payload"
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// DefaultTokens are commonly seen weak/default tokens for OpenClaw
-var DefaultTokens = []string{
-	"change-me-to-a-long-random-token",
-	"openclaw",
-	"OpenClaw",
-	"test",
-	"test123",
-	"admin",
-	"admin123",
-	"password",
-	"token",
-	"secret",
-	"123456",
-	"default",
-	"gateway",
-	"lobster",
-	"demo",
-	"dev",
-	"development",
-	"staging",
-	"production",
-	"abc123",
-	"letmein",
-	"changeme",
-	"1234567890",
-	"qwerty",
-	"master",
-	"root",
-}
+// DefaultTokens are commonly seen weak/default tokens for OpenClaw.
+// Loaded from obfuscated payload registry at runtime.
+var DefaultTokens = payload.List("default_tokens")
 
 // BruteConfig configures the brute force behavior
 type BruteConfig struct {

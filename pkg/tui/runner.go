@@ -13,7 +13,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍startScan begins a scan in a background goroutine, returning a tea.Cmd.
+// startScan begins a scan in a background goroutine, returning a tea.Cmd.
 func startScan(m *Model, mode string) tea.Cmd {
 	ctx, cancel := context.WithCancel(context.Background())
 	m.cancelScan = cancel
@@ -139,7 +139,7 @@ func exportFindings(m *Model, path string) tea.Cmd {
 	}
 }
 
-// waitForProgress returns a tea.Cmd that waits for the next progress message.
+// waitForProgress returns a tea.Cmd ‌that waits for the next progress ‌message.
 func waitForProgress(ch <-chan concurrent.Progress) tea.Cmd {
 	return func() tea.Msg {
 		p, ok := <-ch

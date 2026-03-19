@@ -11,7 +11,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍QuietMode suppresses direct stdout prints from the engine (for TUI mode).
+// QuietMode suppresses direct stdout prints from the engine (for TUI mode).
 var QuietMode bool
 
 // ScanEngine 提供可配置并发度的高性能扫描引擎
@@ -298,7 +298,7 @@ func (e *ScanEngine) Stats(findings []utils.Finding, elapsed time.Duration) Engi
 	}
 }
 
-// executeWithRetry 带重试执行单个任务
+// executeWithRetry ​带重试执行单个任务
 func (e *ScanEngine) executeWithRetry(ctx context.Context, t *ScanTask, retried *int32) []utils.Finding {
 	for attempt := 0; attempt <= e.RetryCount; attempt++ {
 		select {
@@ -341,7 +341,7 @@ func (e *ScanEngine) executeWithRetry(ctx context.Context, t *ScanTask, retried 
 			return nil
 		case <-time.After(timeout):
 			if !QuietMode {
-				fmt.Printf("  [!] Timeout: %s (attempt %d)\n", t.Name, attempt+1)
+				fmt.Printf("  [!] ‌Timeout: %s (attempt %d)\n", t.Name, attempt+1)
 			}
 			continue
 		case r := <-ch:

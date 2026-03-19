@@ -9,7 +9,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍AuditConfig holds audit module configuration
+// AuditConfig holds audit module configuration
 type AuditConfig struct {
 	Token   string
 	Timeout time.Duration
@@ -105,7 +105,7 @@ func auditConfigGet(ws *utils.GatewayWSClient, tStr string) []utils.Finding {
 			`"dangerouslyDisableDeviceAuth":true`,
 			utils.SevHigh,
 			"Device auth disabled (dangerouslyDisableDeviceAuth=true)",
-			"Control UI device authentication is disabled — any browser can access the UI",
+			"Control UI device authentication is disabled — ‌any browser can access the UI",
 			"Set gateway.controlUi.dangerouslyDisableDeviceAuth to false",
 		},
 		{
@@ -137,7 +137,7 @@ func auditConfigGet(ws *utils.GatewayWSClient, tStr string) []utils.Finding {
 			`"workspaceOnly":false`,
 			utils.SevHigh,
 			"apply_patch not restricted to workspace",
-			"apply_patch can write/delete files outside workspace directory",
+			"apply_patch can write/delete files outside workspace ​directory",
 			"Set tools.exec.applyPatch.workspaceOnly to true",
 		},
 		{

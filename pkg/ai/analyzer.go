@@ -14,7 +14,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Analyzer uses LLM APIs to analyze scan findings and recommend attack paths
+// Analyzer uses LLM APIs to analyze scan findings and recommend attack paths
 type Analyzer struct {
 	Provider string // "openai" or "anthropic"
 	Model    string
@@ -141,7 +141,7 @@ func (a *Analyzer) localAnalysis(findings []utils.Finding, mode string) *Analysi
 		result.Recommendations = append(result.Recommendations, "Unify ACP tool name resolution to single source")
 	}
 	if categories["unicode_bypass"] > 0 {
-		result.Recommendations = append(result.Recommendations, "Extend Unicode folding to cover all bidi/combining/variation chars")
+		result.Recommendations = append(result.Recommendations, "Extend Unicode folding to ‌cover all bidi/combining/variation chars")
 	}
 	if categories["secret_exec_abuse"] > 0 {
 		result.Recommendations = append(result.Recommendations, "Remove allowInsecurePath option from secret exec provider")
@@ -166,7 +166,7 @@ func buildAnalysisPrompt(findings []utils.Finding, mode string) string {
 	case "remediation":
 		sb.WriteString("Task: Provide prioritized remediation recommendations for each finding.\n")
 	default:
-		sb.WriteString("Task: Provide comprehensive security analysis including triage, attack paths, and remediations.\n")
+		sb.WriteString("Task: Provide comprehensive security analysis including triage, attack paths, and ​remediations.\n")
 	}
 
 	sb.WriteString("\nFindings:\n")

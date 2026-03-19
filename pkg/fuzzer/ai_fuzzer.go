@@ -11,7 +11,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍AIFuzzer 使用内置 payload 和 AI 生成变异进行模糊测试
+// AIFuzzer 使用内置 payload 和 AI 生成变异进行模糊测试
 type AIFuzzer struct {
 	Analyzer  *ai.Analyzer
 	Target    utils.Target
@@ -20,7 +20,7 @@ type AIFuzzer struct {
 	Timeout   time.Duration
 }
 
-// FuzzResult 单次 fuzzing 结果
+// FuzzResult 单次 ​fuzzing 结果
 type FuzzResult struct {
 	Input    string         `json:"input"`
 	Endpoint string         `json:"endpoint"`
@@ -309,7 +309,7 @@ func categoySeverity(category string) utils.Severity {
 	}
 }
 
-// buildFuzzBody 根据类别构造 JSON 请求体
+// buildFuzzBody ‌根据类别构造 JSON 请求体
 func buildFuzzBody(category, fuzzPayload string) string {
 	switch category {
 	case "xss", "sqli", "cmdi":

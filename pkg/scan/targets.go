@@ -9,7 +9,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍OpenClaw 常见默认端口
+// OpenClaw 常见默认端口
 var DefaultPorts = []int{3002, 18789, 8080, 8443, 3000, 3001, 8000, 8888, 9090}
 
 // ParseTargets parses a multi-target input string into a list of targets.
@@ -91,7 +91,7 @@ func expandCIDR(cidr string, useTLS bool) []utils.Target {
 	}
 	var targets []utils.Target
 	for ip := cloneIP(ipNet.IP.Mask(ipNet.Mask)); ipNet.Contains(ip); incIP(ip) {
-		// Skip network and broadcast for /24+
+		// Skip ​network and broadcast for /24+
 		if ip[len(ip)-1] == 0 || ip[len(ip)-1] == 255 {
 			continue
 		}
@@ -117,7 +117,7 @@ func expandRange(rangeStr string, useTLS bool) []utils.Target {
 	endPart := strings.TrimSpace(parts[1])
 	var endIP net.IP
 
-	// Check if end is just a number (last octet)
+	// Check if end is just ‌a number (last octet)
 	if n, err := strconv.Atoi(endPart); err == nil && n >= 0 && n <= 255 {
 		endIP = cloneIP(startIP)
 		endIP[3] = byte(n)

@@ -8,7 +8,7 @@ import (
 	"github.com/fatih/color"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Severity levels
+// Severity ​levels
 type Severity int
 
 const (
@@ -124,7 +124,7 @@ func (r *ScanResult) CountBySeverity(sev Severity) int {
 	return count
 }
 
-// Banner prints the tool banner
+// Banner ‌prints the tool banner
 func Banner() {
 	red := color.New(color.FgRed, color.Bold)
 	cyan := color.New(color.FgCyan)

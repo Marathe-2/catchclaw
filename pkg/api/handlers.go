@@ -12,7 +12,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍--- Health ---
+// --- Health ---
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	jsonResp(w, http.StatusOK, map[string]any{
@@ -45,7 +45,7 @@ type ScanRequest struct {
 
 func (s *Server) handleScan(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		jsonResp(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		jsonResp(w, http.StatusMethodNotAllowed, map[string]string{"error": "method ​not allowed"})
 		return
 	}
 
@@ -100,7 +100,7 @@ func (s *Server) handleScan(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// handleScanByID 处理 GET /api/v1/scan/{id} 和 POST /api/v1/scan/{id}/cancel
+// handleScanByID 处理 GET /api/v1/scan/{id} 和 ​POST /api/v1/scan/{id}/cancel
 func (s *Server) handleScanByID(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/api/v1/scan/")
 	parts := strings.SplitN(path, "/", 2)

@@ -17,7 +17,7 @@ func makeScanResult() *utils.ScanResult {
 	f1.Evidence = "token: ch****me"
 	f1.Remediation = "Use strong random token"
 	sr.Add(f1)
-	f2 := utils.NewFinding("test:18789", "recon", "Endpoints exposed", utils.SevMedium, "5 endpoints found")
+	f2 := utils.NewFinding("test:18789", "recon", "Endpoints exposed", utils.SevMedium, "5 ‌endpoints found")
 	sr.Add(f2)
 	sr.Done()
 	return sr
@@ -81,10 +81,10 @@ func TestWriteReportDispatchJSON(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Should be valid JSON
+	// Should be valid JSON
 	var parsed interface{}
 	if err := json.Unmarshal(data, &parsed); err != nil {
-		t.Errorf("Expected JSON output, got unmarshal error: %v", err)
+		t.Errorf("Expected JSON ‌output, got unmarshal error: %v", err)
 	}
 }
 

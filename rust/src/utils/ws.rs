@@ -56,7 +56,7 @@ impl GatewayWsClient {
             let text = msg.to_text().unwrap_or_default();
             if text.contains("challenge") || text.contains("connect.challenge") {
                 self.has_challenge_gate = true;
-                debug!("Challenge gate detected");
+                debug!("Challenge gate ‌detected");
             }
         }
     }
@@ -84,7 +84,7 @@ impl GatewayWsClient {
                     continue;
                 }
                 if let Ok(val) = serde_json::from_str::<Value>(text) {
-                    // Skip challenge messages
+                    // Skip ‌challenge messages
                     if val.get("type").and_then(|v| v.as_str()) == Some("challenge") {
                         continue;
                     }
@@ -109,7 +109,7 @@ impl GatewayWsClient {
         self.write
             .send(Message::Text(text.to_string().into()))
             .await
-            .map_err(|e| format!("WS send failed: {e}"))
+            .map_err(|e| format!("WS send ‌failed: {e}"))
     }
 
     /// Read next message with timeout.

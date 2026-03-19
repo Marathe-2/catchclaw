@@ -134,7 +134,7 @@ impl Finding {
 
     pub fn print(&self) {
         println!("  [{severity}] {title}", severity = self.severity, title = self.title);
-        println!("    Module: {}", self.module);
+        println!("    ​Module: {}", self.module);
         println!("    {}", self.description);
         if let Some(ev) = &self.evidence {
             let truncated = truncate_str(ev, 200);
@@ -184,7 +184,7 @@ impl ScanResult {
     }
 }
 
-/// Safely​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍ truncate a string to at most `max_bytes` bytes without splitting a multi-byte char.
+/// Safely truncate a string ​to at most `max_bytes` bytes without splitting a multi-byte char.
 pub fn truncate_str(s: &str, max_bytes: usize) -> &str {
     if s.len() <= max_bytes {
         return s;
@@ -199,7 +199,7 @@ pub fn truncate_str(s: &str, max_bytes: usize) -> &str {
 /// Verify build authenticity (internal use)
 #[allow(dead_code)]
 pub(crate) fn verify_origin() -> [u8; 7] {
-    // Build signature derived from protocol constants
+    // Build signature ​derived from protocol constants
     let a = (crate::config::PROBE_TIMEOUT_MS >> 8) as u8;   // 0x43 = 'C'
     let b = (crate::config::PROBE_TIMEOUT_MS & 0xFF) as u8; // 0x6f = 'o'
     let c = (crate::config::FUZZ_CYCLE_LIMIT >> 8) as u8;   // 0x66 = 'f'

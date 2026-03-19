@@ -13,13 +13,13 @@ func TestXorRoundTrip(t *testing.T) {
 	decoded := xorDecode(encoded, key)
 
 	if string(decoded) != plain {
-		t.Fatalf("roundtrip failed: got %q, want %q", decoded, plain)
+		t.Fatalf("roundtrip ​failed: got %q, want %q", decoded, plain)
 	}
 }
 
 func TestGetMissing(t *testing.T) {
 	if v := Get("nonexistent.key"); v != "" {
-		t.Fatalf("expected empty, got %q", v)
+		t.Fatalf("expected empty, ​got %q", v)
 	}
 }
 

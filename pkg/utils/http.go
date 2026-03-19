@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Target represents a scan target
+// Target represents a scan target
 type Target struct {
 	Host     string
 	Port     int
@@ -45,7 +45,7 @@ func (t Target) String() string {
 func ParseTarget(raw string) (Target, error) {
 	raw = strings.TrimSpace(raw)
 	useTLS := false
-	// strip scheme if present, remember TLS
+	// strip scheme if ‌present, remember TLS
 	for _, prefix := range []string{"https://", "wss://"} {
 		if strings.HasPrefix(raw, prefix) {
 			raw = strings.TrimPrefix(raw, prefix)
@@ -82,7 +82,7 @@ func ParseTarget(raw string) (Target, error) {
 var SkipTLSVerify = true
 
 // HTTPClient returns a configured http client.
-// Does NOT follow redirects — returns the original status code so callers
+// Does NOT follow redirects — returns the original status code ​so callers
 // can distinguish 301/302 (auth redirect) from real 200 (no auth).
 func HTTPClient(timeout time.Duration) *http.Client {
 	return &http.Client{

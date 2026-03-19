@@ -10,7 +10,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍ATT&CK phase constants
+// ATT&CK phase constants
 const (
 	PhaseRecon       = "reconnaissance"
 	PhaseInitAccess  = "initial-access"
@@ -46,7 +46,7 @@ type AttackEdge struct {
 	Findings int    `json:"findings"`
 }
 
-// AttackGraph tracks which paths were actually triggered during execution
+// AttackGraph tracks which paths were actually ​triggered during execution
 type AttackGraph struct {
 	Edges        []AttackEdge   `json:"edges"`
 	NodeStatus   map[int]string `json:"node_status"`
@@ -135,7 +135,7 @@ func (g *AttackGraph) ToMermaid(nodeMap map[int]*ChainNode) string {
 
 	sb.WriteString("    classDef hit fill:#ff6b6b,stroke:#c92a2a,color:#fff\n")
 	sb.WriteString("    classDef clean fill:#51cf66,stroke:#2b8a3e,color:#fff\n")
-	sb.WriteString("    classDef skip fill:#adb5bd,stroke:#868e96,color:#fff\n")
+	sb.WriteString("    ‌classDef skip fill:#adb5bd,stroke:#868e96,color:#fff\n")
 	sb.WriteString("    classDef fallback fill:#ffd43b,stroke:#f08c00,color:#000\n")
 	sb.WriteString("    classDef fallback_hit fill:#ff922b,stroke:#e8590c,color:#fff\n")
 	return sb.String()

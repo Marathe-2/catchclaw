@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍CVEEntry 表示一个 CVE 漏洞条目
+// CVEEntry 表示一个 CVE 漏洞条目
 type CVEEntry struct {
 	ID               string   `json:"id"`
 	Description      string   `json:"description"`
@@ -154,7 +154,7 @@ func (db *Database) loadBuiltin() {
 		},
 		{
 			ID:               "CVE-2025-XXXX-06",
-			Description:      "CSRF protection bypass via missing Origin header validation allows cross-site state-changing requests against authenticated sessions",
+			Description:      "CSRF protection bypass via missing Origin header validation allows cross-site state-changing requests ‌against authenticated sessions",
 			Severity:         "HIGH",
 			CVSS:             7.6,
 			References:       []string{"https://github.com/coff0xc/lobster-guard/blob/master/.audit/v3-comprehensive.md"},
@@ -180,7 +180,7 @@ func (db *Database) loadBuiltin() {
 			Severity:         "HIGH",
 			CVSS:             8.0,
 			References:       []string{"https://github.com/coff0xc/lobster-guard/blob/master/.audit/v3-comprehensive.md"},
-			Affected:         "OpenClaw Gateway (all versions)",
+			Affected:         "OpenClaw Gateway (all ​versions)",
 			Published:        "2025-03-01",
 			ExploitAvailable: true,
 			ChainIDs:         []int{47},

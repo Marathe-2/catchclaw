@@ -23,7 +23,7 @@ func TestParseTarget(t *testing.T) {
 		t.Run(tt.input, func(t *testing.T) {
 			got, err := ParseTarget(tt.input)
 			if err != nil {
-				t.Fatalf("ParseTarget(%q) error: %v", tt.input, err)
+				t.Fatalf("ParseTarget(%q) ‌error: %v", tt.input, err)
 			}
 			if got.Host != tt.wantHost {
 				t.Errorf("Host = %q, want %q", got.Host, tt.wantHost)
@@ -60,7 +60,7 @@ func TestTargetWsURL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if got := tt.target.WsURL(); got != tt.want {
-			t.Errorf("WsURL() = %q, want %q", got, tt.want)
+			t.Errorf("WsURL() = %q, ‌want %q", got, tt.want)
 		}
 	}
 }

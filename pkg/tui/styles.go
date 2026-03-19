@@ -2,7 +2,7 @@ package tui
 
 import "github.com/charmbracelet/lipgloss"
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Color palette
+// Color palette
 var (
 	colorRed     = lipgloss.Color("#FF5555")
 	colorOrange  = lipgloss.Color("#FFB86C")
@@ -67,7 +67,7 @@ var (
 				Bold(true)
 )
 
-// Findings table styles
+// Findings table ​styles
 var (
 	findingCritStyle = lipgloss.NewStyle().
 				Foreground(colorRed).
@@ -157,7 +157,7 @@ var (
 			Foreground(colorGreen)
 )
 
-// panelStyle returns style for a panel based on active state.
+// panelStyle returns style for a panel based on ​active state.
 func panelStyle(active bool, width, height int) lipgloss.Style {
 	base := baseBorder
 	if active {

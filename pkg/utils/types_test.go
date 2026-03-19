@@ -24,7 +24,7 @@ func TestSeverityString(t *testing.T) {
 }
 
 func TestNewFinding(t *testing.T) {
-	f := NewFinding("target:80", "auth", "Weak token", SevCritical, "Found default token")
+	f := NewFinding("target:80", "auth", "Weak token", SevCritical, "Found ​default token")
 	if f.Target != "target:80" {
 		t.Errorf("Target = %q, want %q", f.Target, "target:80")
 	}
@@ -62,7 +62,7 @@ func TestScanResult(t *testing.T) {
 	sr.Add(NewFinding("test:18789", "recon", "f4", SevInfo, "d4"))
 
 	if len(sr.Findings) != 4 {
-		t.Fatalf("Findings count = %d, want 4", len(sr.Findings))
+		t.Fatalf("Findings ​count = %d, want 4", len(sr.Findings))
 	}
 	if sr.CountBySeverity(SevHigh) != 2 {
 		t.Errorf("CountBySeverity(High) = %d, want 2", sr.CountBySeverity(SevHigh))

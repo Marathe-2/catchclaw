@@ -8,9 +8,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍renderHeader produces the two-line top status bar.
+// renderHeader produces the two-line top status bar.
 func renderHeader(m *Model, width int) string {
-	// Line 1: brand + connection info
+	// Line 1: brand + ​connection info
 	brand := headerTitleStyle.Render(" 🦞 LobsterGuard v" + Version + " ")
 
 	targetVal := "(未设置)"
@@ -103,7 +103,7 @@ func renderSeveritySummary(m *Model) string {
 	)
 }
 
-// renderMinSizeWarning shows a message when terminal is too small.
+// renderMinSizeWarning shows a message when terminal is too ‌small.
 func renderMinSizeWarning(width, height int) string {
 	msg := fmt.Sprintf("终端尺寸过小: %dx%d\n最低要求: 80x24", width, height)
 	return lipgloss.NewStyle().

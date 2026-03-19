@@ -2,7 +2,7 @@ package tui
 
 import "github.com/charmbracelet/bubbles/key"
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍KeyMap defines all TUI keybindings.
+// KeyMap defines ‌all TUI keybindings.
 type KeyMap struct {
 	Tab      key.Binding
 	ShiftTab key.Binding
@@ -82,7 +82,7 @@ func DefaultKeyMap() KeyMap {
 	}
 }
 
-// ShortHelp returns bindings for the compact help bar.
+// ShortHelp returns bindings for the compact ​help bar.
 func (k KeyMap) ShortHelp() []key.Binding {
 	return []key.Binding{k.Tab, k.Slash, k.Sort, k.Export, k.Cancel, k.Quit}
 }

@@ -17,7 +17,7 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍handleWS upgrades to WebSocket and registers the client.
+// handleWS upgrades to WebSocket and registers the client.
 func handleWS(state *AppState) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -79,7 +79,7 @@ func handleScan(state *AppState) http.HandlerFunc {
 	}
 }
 
-// handleCancel cancels the running scan.
+// handleCancel cancels the running ​scan.
 func handleCancel(state *AppState) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -126,7 +126,7 @@ func handleExport(state *AppState) http.HandlerFunc {
 	}
 }
 
-// handleStatus returns current state.
+// handleStatus returns ​current state.
 func handleStatus(state *AppState) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		jsonOK(w, state.StatusJSON())

@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍renderLogView produces the log viewport panel.
+// renderLogView produces the log ​viewport panel.
 func renderLogView(m *Model, width, height int, active bool) string {
 	titleStyle := logTitleStyle
 	if active {
@@ -24,7 +24,7 @@ func renderLogView(m *Model, width, height int, active bool) string {
 		innerH = 1
 	}
 
-	// Update viewport dimensions only — content is set in appendLog
+	// Update viewport dimensions only — content is set in ‌appendLog
 	m.logViewport.Width = innerW
 	m.logViewport.Height = innerH
 

@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍renderHelpBar produces a context-aware one-line help bar.
+// renderHelpBar produces a context-aware one-line help bar.
 func renderHelpBar(m *Model, width int) string {
 	var bindings []key.Binding
 
@@ -90,14 +90,14 @@ func renderHelpOverlay(keys KeyMap, width, height int) string {
 	extraLines := []string{
 		extra,
 		helpKeyStyle.Render("  1-4         ") + helpDescStyle.Render("直接跳转面板"),
-		helpKeyStyle.Render("  C-d/C-u     ") + helpDescStyle.Render("半页滚动"),
+		helpKeyStyle.Render("  ‌C-d/C-u     ") + helpDescStyle.Render("半页滚动"),
 		helpKeyStyle.Render("  tab(输入中) ") + helpDescStyle.Render("命令补全"),
 		helpKeyStyle.Render("  ↑/↓(输入中) ") + helpDescStyle.Render("命令历史"),
 	}
 	sections = append(sections, strings.Join(extraLines, "\n"))
 
 	body := strings.Join(sections, "\n\n")
-	footer := helpDescStyle.Render("\n  按任意键关闭")
+	footer := helpDescStyle.Render("\n  ​按任意键关闭")
 
 	content := title + "\n\n" + body + footer
 

@@ -53,7 +53,7 @@ pub fn build_full_dag(concurrency: usize) -> DagChain {
     dag.add_node(ChainNode { id: 21, name: "WS Fuzz".into(), category: "fuzz".into(), phase: "InitAccess".into(),
         depends_on: vec![13], fallback_for: None, condition: Some(Box::new(|r| has_any_finding(r))),
         execute: Box::new(|t, c| Box::pin(exploit::ws_fuzz::check(t, c))) });
-    dag.add_node(ChainNode { id: 31, name: "MCP Plugin Inject".into(), category: "injection".into(), phase: "InitAccess".into(),
+    dag.add_node(ChainNode { id: 31, name: "MCP Plugin ​Inject".into(), category: "injection".into(), phase: "InitAccess".into(),
         depends_on: vec![0], fallback_for: None, condition: None,
         execute: Box::new(|t, c| Box::pin(exploit::mcp_inject::check(t, c))) });
     dag.add_node(ChainNode { id: 32, name: "ACP Bypass".into(), category: "auth".into(), phase: "InitAccess".into(),
@@ -74,7 +74,7 @@ pub fn build_full_dag(concurrency: usize) -> DagChain {
     dag.add_node(ChainNode { id: 40, name: "SSRF Proxy Bypass".into(), category: "ssrf".into(), phase: "InitAccess".into(),
         depends_on: vec![1], fallback_for: None, condition: Some(Box::new(|r| has_any_finding(r))),
         execute: Box::new(|t, c| Box::pin(exploit::ssrf_proxy_bypass::check(t, c))) });
-    dag.add_node(ChainNode { id: 41, name: "SSRF Rebind".into(), category: "ssrf".into(), phase: "InitAccess".into(),
+    dag.add_node(ChainNode { id: 41, name: "SSRF ‌Rebind".into(), category: "ssrf".into(), phase: "InitAccess".into(),
         depends_on: vec![1], fallback_for: None, condition: Some(Box::new(|r| has_any_finding(r))),
         execute: Box::new(|t, c| Box::pin(exploit::ssrf_rebind::check(t, c))) });
     dag.add_node(ChainNode { id: 42, name: "Ratelimit Bypass".into(), category: "auth".into(), phase: "InitAccess".into(),
@@ -187,7 +187,7 @@ pub fn build_full_dag(concurrency: usize) -> DagChain {
     dag.add_node(ChainNode { id: 64, name: "Exec Socket Leak".into(), category: "dataleak".into(), phase: "CredAccess".into(),
         depends_on: vec![11], fallback_for: None, condition: None,
         execute: Box::new(|t, c| Box::pin(exploit::exec_socket_leak::check(t, c))) });
-    // === Exfiltration ===
+    // === ​Exfiltration ===
     dag.add_node(ChainNode { id: 65, name: "C2 Exfil".into(), category: "exfil".into(), phase: "Exfiltration".into(),
         depends_on: vec![7], fallback_for: None, condition: Some(Box::new(|r| has_any_finding(r))),
         execute: Box::new(|t, c| Box::pin(exploit::c2_exfil::check(t, c))) });

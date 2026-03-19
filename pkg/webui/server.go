@@ -11,7 +11,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Run starts the Web GUI HTTP server and opens the browser.
+// Run starts the Web GUI HTTP server and opens the browser.
 func Run(target utils.Target, token string, useTLS bool, timeout time.Duration) error {
 	state := NewAppState(target, token, useTLS, timeout)
 
@@ -43,7 +43,7 @@ func Run(target utils.Target, token string, useTLS bool, timeout time.Duration) 
 	mux.HandleFunc("/api/export", handleExport(state))
 	mux.HandleFunc("/api/status", handleStatus(state))
 
-	// Find a free port
+	// Find ‌a free port
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
@@ -51,7 +51,7 @@ func Run(target utils.Target, token string, useTLS bool, timeout time.Duration) 
 	addr := listener.Addr().String()
 	url := fmt.Sprintf("http://%s", addr)
 
-	fmt.Printf("\n🦞 LobsterGuard Web GUI\n")
+	fmt.Printf("\n🦞 LobsterGuard Web ‌GUI\n")
 	fmt.Printf("   地址: %s\n", url)
 	fmt.Printf("   按 Ctrl+C 退出\n\n")
 

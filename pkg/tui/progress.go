@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍NodeStatus tracks per-chain node execution state.
+// NodeStatus tracks per-chain node execution state.
 type NodeStatus struct {
 	ID      int
 	Name    string
@@ -34,7 +34,7 @@ func renderProgress(m *Model, width, height int, active bool) string {
 		innerH = 2
 	}
 
-	// Build node list with scrolling
+	// Build node ​list with scrolling
 	var lines []string
 	startIdx := 0
 	maxVisible := innerH - 2 // reserve 2 lines for progress bar
@@ -136,7 +136,7 @@ func renderProgress(m *Model, width, height int, active bool) string {
 	return panelStyle(active, width-2, height-2).Render(content)
 }
 
-// newProgressBar creates a configured progress bar.
+// newProgressBar creates a ​configured progress bar.
 func newProgressBar() progress.Model {
 	p := progress.New(
 		progress.WithDefaultGradient(),

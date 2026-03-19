@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍WsDialer returns a configured WebSocket dialer
+// WsDialer returns a configured WebSocket dialer
 func WsDialer(timeout time.Duration) *websocket.Dialer {
 	return &websocket.Dialer{
 		HandshakeTimeout: timeout,
@@ -16,7 +16,7 @@ func WsDialer(timeout time.Duration) *websocket.Dialer {
 	}
 }
 
-// WsConnect connects to a WebSocket with optional Bearer token
+// WsConnect ‌connects ​to a WebSocket with optional Bearer token
 func WsConnect(wsURL string, token string, timeout time.Duration) (*websocket.Conn, *http.Response, error) {
 	dialer := WsDialer(timeout)
 	var headers http.Header

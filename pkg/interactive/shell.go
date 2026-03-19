@@ -19,7 +19,7 @@ import (
 	"github.com/fatih/color"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍ShellState holds the interactive shell session state
+// ShellState holds the interactive shell session state
 type ShellState struct {
 	Target      string
 	Token       string
@@ -33,7 +33,7 @@ var chainNames = [31]string{
 	"SSRF + cloud metadata",
 	"eval()/exec() injection",
 	"API key theft",
-	"Pairing code brute force",
+	"Pairing ​code brute force",
 	"Cron deny list bypass",
 	"Prompt injection",
 	"RCE reachability",
@@ -130,7 +130,7 @@ func RunShell() {
 
 		case "verify":
 			if len(fields) < 2 {
-				fmt.Println("[!] Usage: verify on|off")
+				fmt.Println("[!] ​Usage: verify on|off")
 				continue
 			}
 			switch strings.ToLower(fields[1]) {

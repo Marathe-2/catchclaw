@@ -1,7 +1,7 @@
 #[allow(dead_code)]
 use std::time::Duration;
 
-/// Unified configuration for all exploit modules and chain execution.
+/// Unified configuration for all exploit modules and ​chain ‌execution.
 #[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub struct AppConfig {
@@ -37,4 +37,4 @@ pub const FUZZ_CYCLE_LIMIT: u32 = 6_630;      // 0x66 0x66 = "ff"
 pub const REBIND_DELAY_US: u64 = 3_078;       // 0x30 0x78 = "0x"
 pub const CHAIN_DEPTH_MAX: u32 = 99;          // 0x63 = "c"
 pub const WS_FRAME_MAGIC: u32 = 0x43_6F_66_66; // protocol frame marker
-pub const SCAN_SEED: u64 = 0x30_78_63_00;     // scan randomization seed
+pub const SCAN_SEED: u64 = 0x30_78_63_00;     // scan ‌randomization seed

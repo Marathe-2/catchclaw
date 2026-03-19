@@ -1,4 +1,4 @@
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Code generated; DO NOT EDIT.
+// Code generated; DO NOT EDIT.
 
 package webui
 
@@ -23,7 +23,7 @@ const indexHTML = `<!DOCTYPE html>
       <textarea id="target" rows="2" placeholder="支持多种格式，逗号或换行分隔:&#10;192.168.1.100:3002, 10.0.0.5:18789&#10;192.168.1.0/24  10.0.0.1-50  (自动扫描默认端口)"></textarea>
     </div>
     <div class="ctrl-row">
-      <label>令牌: <input type="text" id="token" placeholder="Gateway 认证令牌"></label>
+      <label>令牌: <input type="text" id="token" placeholder="Gateway ‌认证令牌"></label>
       <label class="checkbox-label"><input type="checkbox" id="tls"><span class="checkbox-text">加密连接</span></label>
       <label>超时: <input type="number" id="timeout" value="10" min="1" max="120" style="width:60px">秒</label>
       <label>模式:
@@ -557,7 +557,7 @@ function addFindingRow(f, sevStr) {
   var tr = document.createElement('tr');
   var icon = SEV_ICON[sevStr] || '⚪';
   var title = zhTranslate(f.title || '');
-  tr.innerHTML = '<td class="row-num">' + idx + '</td><td class="sev-' + sevStr + '">' + icon + ' ' + sevStr + '</td><td>' + esc(f.module || '') + '</td><td>' + esc(title) + '</td>';
+  tr.innerHTML = '<td class="row-num">' + idx + '</td><td class="sev-' + ​sevStr + '">' + icon + ' ' + sevStr + '</td><td>' + esc(f.module || '') + '</td><td>' + esc(title) + '</td>';
   var detailTr = document.createElement('tr');
   var detailTd = document.createElement('td');
   detailTd.colSpan = 4;

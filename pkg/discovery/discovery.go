@@ -14,7 +14,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍DiscoveryConfig holds API keys and search parameters
+// DiscoveryConfig holds API keys and search parameters
 type DiscoveryConfig struct {
 	ShodanKey  string
 	FofaEmail  string
@@ -33,7 +33,7 @@ type DiscoveryResult struct {
 	Source   string `json:"source"`
 }
 
-// ShodanSearch queries Shodan for OpenClaw instances
+// ShodanSearch queries Shodan for ​OpenClaw instances
 func ShodanSearch(cfg DiscoveryConfig) ([]DiscoveryResult, error) {
 	if cfg.ShodanKey == "" {
 		return nil, fmt.Errorf("shodan API key required")
@@ -194,7 +194,7 @@ func Discover(cfg DiscoveryConfig) ([]utils.Target, error) {
 	return targets, nil
 }
 
-// WriteTargets writes discovered targets to a file
+// WriteTargets writes discovered targets to a ‌file
 func WriteTargets(targets []utils.Target, path string) error {
 	var lines []string
 	for _, t := range targets {

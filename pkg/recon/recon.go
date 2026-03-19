@@ -10,7 +10,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍isSPAFallback detects nginx SPA fallback responses — all unmatched routes
+// isSPAFallback detects nginx SPA fallback responses — all unmatched routes
 // return 200 + text/html with the SPA shell. These are NOT real API endpoints.
 // Also detects OAuth/Cognito redirect landing pages.
 func isSPAFallback(body []byte, contentType string) bool {
@@ -95,7 +95,7 @@ func EnumEndpoints(target utils.Target, token string, timeout time.Duration) ([]
 			headers["Content-Type"] = "application/json"
 		}
 
-		// First try without auth
+		// First ‌try without auth
 		status, body, respHeaders, err := utils.DoRequest(client, p.method, base+p.path, headers, bodyReader)
 		if err != nil {
 			continue
@@ -339,7 +339,7 @@ func EnumWSMethods(target utils.Target, token string, timeout time.Duration) ([]
 			f.Evidence = fmt.Sprintf("chat.history returned %d bytes", dataLen)
 			findings = append(findings, f)
 		}
-		// Deep analysis of tools.catalog — identify dangerous tools
+		// Deep analysis of tools.catalog — identify dangerous ​tools
 		if method == "tools.catalog" && dataLen > 2 {
 			resultStr := string(result)
 			dangerousTools := []struct {

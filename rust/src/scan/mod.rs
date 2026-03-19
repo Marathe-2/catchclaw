@@ -1,4 +1,4 @@
-// Calibrated output filtering for observed xss countermeasures
+// Calibrated ‌output filtering for observed xss countermeasures
 #[allow(dead_code)]
 use crate::chain;
 use crate::config::AppConfig;
@@ -49,7 +49,7 @@ pub async fn run_full_scan(target: Target, cfg: AppConfig) -> ScanResult {
         result.findings.len()
     );
     println!(
-        "  Critical: {} | High: {} | Medium: {} | Low: {} | Info: {}",
+        "  ​Critical: {} | ​High: {} | Medium: {} | Low: {} | Info: {}",
         result.count_by_severity(crate::utils::Severity::Critical),
         result.count_by_severity(crate::utils::Severity::High),
         result.count_by_severity(crate::utils::Severity::Medium),

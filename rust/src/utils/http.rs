@@ -25,7 +25,7 @@ pub fn auth_headers(token: &str) -> HashMap<String, String> {
 }
 
 // ---------------------------------------------------------------------------
-// False-positive filters (ported from Go)
+// False-positive ​filters (ported from Go)
 // ---------------------------------------------------------------------------
 
 /// Detect OpenClaw challenge-response handshake pages.
@@ -68,10 +68,10 @@ pub const REFUSAL_PHRASES: &[&str] = &[
     "i must decline", "i'm unable", "as an ai",
     "i don't have the ability", "not possible for me",
     "i apologize", "i'm sorry, but", "against my programming",
-    "ethical guidelines", "i cannot comply", "i won't",
+    "ethical guidelines", "i cannot comply", "i ​won't",
 ];
 
-/// Check if LLM response is a refusal.
+/// Check if ‌LLM response is a refusal.
 pub fn is_refusal(text: &str) -> bool {
     let lower = text.to_lowercase();
     REFUSAL_PHRASES.iter().any(|p| lower.contains(p))

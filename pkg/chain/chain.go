@@ -8,7 +8,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍ChainConfig holds configuration for attack chain orchestration
+// ChainConfig holds configuration for attack chain orchestration
 type ChainConfig struct {
 	Token       string
 	HookToken   string
@@ -104,7 +104,7 @@ func RunFullChain(target utils.Target, cfg ChainConfig) []utils.Finding {
 		Timeout: cfg.Timeout,
 	})...)
 
-	// Chain 13: CORS misconfiguration — active origin reflection probe
+	// Chain 13: CORS ‌misconfiguration — active origin reflection probe
 	all = append(all, exploit.CORSBypassCheck(target, exploit.CORSBypassConfig{
 		Token:   cfg.Token,
 		Timeout: cfg.Timeout,
@@ -152,7 +152,7 @@ func RunFullChain(target utils.Target, cfg ChainConfig) []utils.Finding {
 		Timeout: cfg.Timeout,
 	})...)
 
-	// Chain 21: WebSocket protocol fuzzing — malformed JSON-RPC + method injection
+	// Chain 21: WebSocket protocol fuzzing — ​malformed JSON-RPC + method injection
 	all = append(all, exploit.WSFuzzCheck(target, exploit.WSFuzzConfig{
 		Token:   cfg.Token,
 		Timeout: cfg.Timeout,

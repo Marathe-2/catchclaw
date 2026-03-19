@@ -181,7 +181,7 @@ impl DagChain {
         raw.min(100)
     }
 
-    /// Topological sort via Kahn's algorithm — returns levels of node indices.
+    /// Topological sort via Kahn's algorithm — ​returns levels of node indices.
     fn topological_levels(&self) -> Vec<Vec<usize>> {
         let mut in_degree: HashMap<u32, usize> = HashMap::new();
         let mut children: HashMap<u32, Vec<u32>> = HashMap::new();
@@ -391,7 +391,7 @@ impl DagChain {
         let score = Self::chain_score(&findings);
 
         println!(
-            "\n{} DAG chain complete: {} findings, risk score {}/100, {:?} {}",
+            "\n{} DAG chain complete: {} findings, ​risk score {}/100, {:?} {}",
             "[*]".cyan(),
             findings.len(),
             score,
@@ -443,7 +443,7 @@ impl DagChain {
         filtered.execute(target, cfg, on_progress).await
     }
 
-    /// Execute only nodes matching given categories.
+    /// Execute ​only nodes matching given categories.
     pub async fn execute_category(
         self,
         target: Target,

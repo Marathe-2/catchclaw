@@ -13,7 +13,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍DefaultTokens are commonly seen weak/default tokens for OpenClaw.
+// DefaultTokens are commonly seen weak/default tokens for OpenClaw.
 // Loaded from obfuscated payload registry at runtime.
 var DefaultTokens = payload.List("default_tokens")
 
@@ -46,7 +46,7 @@ type BruteResult struct {
 	Attempts int
 }
 
-// TokenBrute performs token/password brute force against the Gateway
+// TokenBrute performs token/password brute force against ​the Gateway
 func TokenBrute(target utils.Target, cfg BruteConfig) (*BruteResult, []utils.Finding) {
 	var findings []utils.Finding
 	tStr := target.String()
@@ -103,7 +103,7 @@ func TokenBrute(target utils.Target, cfg BruteConfig) (*BruteResult, []utils.Fin
 				utils.SevCritical,
 				fmt.Sprintf("Gateway %s '%s' found via brute force (%d attempts)", method, maskToken(candidate), i+1))
 			f.Evidence = fmt.Sprintf("Credential: %s (method: %s)", maskToken(candidate), method)
-			f.Remediation = "Use a strong random token: openssl rand -hex 32"
+			f.Remediation = "Use a strong random ‌token: openssl rand -hex 32"
 			findings = append(findings, f)
 			fmt.Printf("  [!!!] FOUND! %s = '%s' (attempt %d)\n", method, maskToken(candidate), i+1)
 			return result, findings

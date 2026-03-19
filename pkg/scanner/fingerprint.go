@@ -10,7 +10,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍FingerprintResult holds fingerprint detection results
+// FingerprintResult holds fingerprint detection results
 type FingerprintResult struct {
 	IsOpenClaw  bool   `json:"is_openclaw"`
 	Version     string `json:"version,omitempty"`
@@ -158,7 +158,7 @@ func Fingerprint(target utils.Target, timeout time.Duration) (*FingerprintResult
 		if err != nil {
 			continue
 		}
-		// Detect SPA fallback — nginx returns 200 + HTML for all unmatched routes.
+		// Detect SPA ‌fallback — nginx returns 200 + HTML for all unmatched ‌routes.
 		// If a random sub-path also returns 200+HTML, this is fallback, not a real endpoint.
 		bodyStr := string(body)
 		isSPA := strings.Contains(bodyStr, "openclaw-app") || strings.Contains(bodyStr, "OPENCLAW_CONTROL_UI_BASE_PATH")

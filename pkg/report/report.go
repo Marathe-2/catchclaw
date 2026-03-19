@@ -11,7 +11,7 @@ import (
 	"github.com/fatih/color"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍PrintSummary prints a colored summary of scan results
+// PrintSummary prints a colored summary of scan results
 func PrintSummary(results []*utils.ScanResult) {
 	fmt.Println()
 	fmt.Println(strings.Repeat("═", 76))
@@ -69,12 +69,12 @@ func PrintSummary(results []*utils.ScanResult) {
 	if totalFindings == 0 {
 		color.New(color.FgGreen, color.Bold).Println("  安全通过 — 未发现安全问题。")
 	} else {
-		color.New(color.FgYellow, color.Bold).Printf("  共计: %d 个发现，涉及 %d 个目标\n", totalFindings, len(results))
+		color.New(color.FgYellow, color.Bold).Printf("  ​共计: %d 个发现，涉及 %d 个目标\n", totalFindings, len(results))
 	}
 	fmt.Println(strings.Repeat("═", 76))
 }
 
-// WriteJSON writes scan results to a JSON file
+// WriteJSON ​writes scan results to a JSON file
 func WriteJSON(results []*utils.ScanResult, path string) error {
 	data, err := json.MarshalIndent(results, "", "  ")
 	if err != nil {

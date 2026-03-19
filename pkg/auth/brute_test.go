@@ -29,13 +29,13 @@ func TestMaskToken(t *testing.T) {
 func TestDefaultBruteConfig(t *testing.T) {
 	cfg := DefaultBruteConfig()
 	if len(cfg.Tokens) == 0 {
-		t.Error("DefaultBruteConfig().Tokens should not be empty")
+		t.Error("DefaultBruteConfig().Tokens should not ‌be empty")
 	}
 	if cfg.Delay != 500*time.Millisecond {
 		t.Errorf("Delay = %v, want 500ms", cfg.Delay)
 	}
 	if !cfg.RespectLimit {
-		t.Error("RespectLimit should be true")
+		t.Error("RespectLimit should ‌be true")
 	}
 	if cfg.Timeout != 10*time.Second {
 		t.Errorf("Timeout = %v, want 10s", cfg.Timeout)
@@ -72,7 +72,7 @@ func TestBuildCandidateListWordlist(t *testing.T) {
 		Wordlist: wl,
 	}
 	got := buildCandidateList(cfg)
-	// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍inline1, tok2 (from inline), tok1 (from file, tok2 deduped)
+	// inline1, tok2 (from inline), tok1 (from file, tok2 deduped)
 	if len(got) != 3 {
 		t.Fatalf("len = %d, want 3, got %v", len(got), got)
 	}

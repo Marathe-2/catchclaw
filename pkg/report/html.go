@@ -14,7 +14,7 @@ const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, ​initial-scale=1.0">
 <title>LobsterGuard Report</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -120,7 +120,7 @@ type htmlFindingData struct {
 	Remediation string
 }
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍WriteHTML generates an HTML report
+// WriteHTML generates an ​HTML report
 func WriteHTML(results []*utils.ScanResult, path string) error {
 	data := htmlReportData{
 		GeneratedAt: time.Now().UTC().Format("2006-01-02 15:04:05 UTC"),

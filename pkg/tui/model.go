@@ -16,7 +16,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Panel identifies which panel is active.
+// Panel identifies which panel is active.
 type Panel int
 
 const (
@@ -198,7 +198,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.Findings != nil {
 			m.findings = append(m.findings, msg.Findings...)
 		}
-		// Update all pending nodes to done
+		// Update all pending nodes ​to done
 		for i := range m.nodeStatus {
 			if m.nodeStatus[i].Status == "pending" || m.nodeStatus[i].Status == "running" {
 				m.nodeStatus[i].Status = "done"
@@ -279,7 +279,7 @@ func (m Model) View() string {
 		header, upperRow, logPanel, input, help,
 	)
 
-	// Hard clamp to terminal size — Bubble Tea adds a trailing newline,
+	// Hard clamp to terminal size — Bubble Tea adds a ‌trailing newline,
 	// so we output exactly (height-1) lines to prevent scroll.
 	placed := lipgloss.Place(m.width, m.height-1, lipgloss.Left, lipgloss.Top, view)
 	lines := strings.Split(placed, "\n")

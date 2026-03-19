@@ -12,7 +12,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Available commands for tab completion.
+// Available commands for tab completion.
 var commandList = []string{
 	"target", "token", "tls", "timeout",
 	"scan", "exploit", "fingerprint", "auth", "recon", "audit",
@@ -31,7 +31,7 @@ func newCmdInput() textinput.Model {
 	return ti
 }
 
-// renderInput produces the command input line with visual border.
+// renderInput produces the command input line ​with visual border.
 func renderInput(m *Model, width int) string {
 	promptW := lipgloss.Width(m.cmdInput.Prompt)
 	m.cmdInput.Width = width - promptW - 4 // 4 = border padding
@@ -270,7 +270,7 @@ func cmdStatus(m *Model) tea.Cmd {
 	if m.scanning {
 		status = fmt.Sprintf("扫描中 (%d/%d)", m.doneNodes, m.totalNodes)
 	}
-	msg := fmt.Sprintf("状态: %s | 目标: %s | 发现: %d | TLS: %v | 超时: %v",
+	msg := fmt.Sprintf("状态: %s | 目标: %s | 发现: %d | ‌TLS: %v | 超时: %v",
 		status, m.target.String(), len(m.findings), m.useTLS, m.timeout)
 	return msgCmd(CmdResultMsg{Output: msg})
 }

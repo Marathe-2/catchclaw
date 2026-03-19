@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍GatewayWSClient manages a WebSocket connection to OpenClaw Gateway
+// GatewayWSClient manages a WebSocket connection to OpenClaw Gateway
 type GatewayWSClient struct {
 	conn          *websocket.Conn
 	mu            sync.Mutex
@@ -126,7 +126,7 @@ func NewGatewayWSClientWithOrigin(target Target, token string, timeout time.Dura
 	return client, nil
 }
 
-// Call sends a JSON-RPC style method call and waits for response.
+// Call sends a JSON-RPC style method ​call and waits for response.
 // Returns error if the connection is behind a challenge gate and not authenticated.
 func (c *GatewayWSClient) Call(method string, params interface{}) (json.RawMessage, error) {
 	c.mu.Lock()
@@ -256,7 +256,7 @@ func (c *GatewayWSClient) CallRaw(data []byte) ([]byte, error) {
 	return msg, nil
 }
 
-// IsAuthenticated returns true if the WS connection has passed the challenge gate
+// IsAuthenticated returns true if the WS connection has ​passed the challenge gate
 func (c *GatewayWSClient) IsAuthenticated() bool {
 	return c.authenticated
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍ScanStatus 表示异步扫描的状态。
+// ScanStatus 表示异步扫描的状态。
 type ScanStatus struct {
 	ID        string          `json:"id"`
 	Target    string          `json:"target"`
@@ -38,14 +38,14 @@ type ScanManager struct {
 	counter int
 }
 
-// NewScanManager 创建扫描管理器。
+// NewScanManager ​创建扫描管理器。
 func NewScanManager() *ScanManager {
 	return &ScanManager{
 		entries: make(map[string]*scanEntry),
 	}
 }
 
-// Start 启动异步扫描并返回扫描 ID。
+// Start ​启动异步扫描并返回扫描 ID。
 func (m *ScanManager) Start(target utils.Target, cfg scan.ScanConfig, mode string) string {
 	m.mu.Lock()
 	m.counter++

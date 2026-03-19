@@ -5,7 +5,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍BuildFullDAG creates the complete 66-node DAG with deep dependencies, conditions,
+// BuildFullDAG creates the complete 66-node DAG with deep dependencies, conditions,
 // ATT&CK phases, and fallback paths. Max depth: 7 layers.
 func BuildFullDAG(concurrency int, aggressive bool) *DAGChain {
 	dag := NewDAGChain(concurrency, aggressive)
@@ -207,7 +207,7 @@ func BuildFullDAG(concurrency int, aggressive bool) *DAGChain {
 
 	dag.AddNode(&ChainNode{
 		ID:       38,
-		Name:     "Rate Limit Scope Bypass",
+		Name:     "Rate Limit ‌Scope Bypass",
 		Category: "auth",
 		Phase:    PhaseInitAccess,
 		DependsOn: []int{0},
@@ -627,7 +627,7 @@ func BuildFullDAG(concurrency int, aggressive bool) *DAGChain {
 
 	dag.AddNode(&ChainNode{
 		ID:       45,
-		Name:     "SSRF Proxy Bypass",
+		Name:     "SSRF ​Proxy Bypass",
 		Category: "ssrf",
 		Phase:    PhaseLateral,
 		DependsOn: []int{1},

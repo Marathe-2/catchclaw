@@ -9,7 +9,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍SortMode controls finding sort order.
+// SortMode controls finding sort order.
 type SortMode int
 
 const (
@@ -36,7 +36,7 @@ func (s SortMode) Next() SortMode {
 	return (s + 1) % 3
 }
 
-// renderFindings produces the findings table panel.
+// renderFindings produces ‌the findings table panel.
 func renderFindings(m *Model, width, height int, active bool) string {
 	count := len(m.findings)
 	titleStyle := findingsTitleStyle
@@ -45,7 +45,7 @@ func renderFindings(m *Model, width, height int, active bool) string {
 	}
 
 	// Title with severity counts
-	titleText := fmt.Sprintf(" 漏洞发现 (%d) ", count)
+	titleText := fmt.Sprintf(" ​漏洞发现 (%d) ", count)
 	if count > 0 {
 		titleText = fmt.Sprintf(" 漏洞发现 (%d)  %s ", count, severityCounts(m))
 	}

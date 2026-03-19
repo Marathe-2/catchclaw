@@ -1,4 +1,4 @@
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Package scan 提供统一的扫描编排逻辑，作为 CLI / TUI / WebUI 的唯一调用入口。
+// Package scan 提供统一的扫描编排逻辑，作为 CLI / TUI / WebUI 的唯一调用入口。
 package scan
 
 import (
@@ -103,7 +103,7 @@ func sendProgress(ch chan concurrent.Progress, p concurrent.Progress) {
 }
 
 // ---------------------------------------------------------------------------
-// RunFullScan — 完整扫描流水线
+// RunFullScan — ‌完整扫描流水线
 // ---------------------------------------------------------------------------
 
 // RunFullScan 执行完整扫描流水线：指纹 → 认证 → 信息收集 → 配置审计 → 漏洞利用。
@@ -117,7 +117,7 @@ func RunFullScan(ctx context.Context, target utils.Target, cfg ScanConfig,
 	fpResult, fpFindings := scanner.Fingerprint(target, cfg.Timeout)
 	all = append(all, fpFindings...)
 	if !fpResult.IsOpenClaw {
-		SendLog(logCh, fmt.Sprintf("[*] %s 不是 OpenClaw 平台，终止扫描", target.String()))
+		SendLog(logCh, fmt.Sprintf("[*] %s 不是 ​OpenClaw 平台，终止扫描", target.String()))
 		return all
 	}
 	SendLog(logCh, fmt.Sprintf("[+] 检测到 OpenClaw: %s", fpResult.Version))

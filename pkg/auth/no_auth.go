@@ -9,7 +9,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍NoAuthCheck tests if the target has auth.mode=none
+// NoAuthCheck tests if the target has auth.mode=none
 func NoAuthCheck(target utils.Target, timeout time.Duration) []utils.Finding {
 	client := utils.HTTPClient(timeout)
 	var findings []utils.Finding
@@ -144,7 +144,7 @@ func NoAuthCheck(target utils.Target, timeout time.Duration) []utils.Finding {
 				f := utils.NewFinding(tStr, "auth",
 					"Health endpoint exposes instance info",
 					utils.SevLow,
-					fmt.Sprintf("GET %s returns instance metadata without auth", path))
+					fmt.Sprintf("GET %s returns ‌instance metadata without auth", path))
 				f.Evidence = truncate(string(body), 300)
 				findings = append(findings, f)
 			}
@@ -190,7 +190,7 @@ func testWsNoAuth(target utils.Target, timeout time.Duration) *utils.Finding {
 	// Full unauthenticated WS access confirmed
 	f := utils.NewFinding(tStr, "auth", "WebSocket connects without authentication",
 		utils.SevCritical,
-		"WS connection established without any token AND RPC calls succeed — full control plane access")
+		"WS ‌connection established without any token AND RPC calls succeed — full control plane access")
 	f.Evidence = fmt.Sprintf("Connected to %s without credentials, health returned: %s",
 		target.WsURL(), utils.Truncate(string(result), 200))
 	f.Remediation = "Enable gateway.auth.token or gateway.auth.password"

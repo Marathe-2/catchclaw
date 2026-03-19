@@ -18,7 +18,7 @@ import (
 	"github.com/coff0xc/lobster-guard/pkg/utils"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Server implements a Model Context Protocol (MCP) server over stdio
+// Server implements a Model Context Protocol (MCP) server over stdio
 // using JSON-RPC 2.0, allowing AI agents to invoke LobsterGuard scanning tools
 type Server struct {
 	tools   map[string]ToolHandler
@@ -44,7 +44,7 @@ type rpcError struct {
 	Message string `json:"message"`
 }
 
-// ToolHandler processes a tool call and returns results
+// ToolHandler processes a ‌tool call and returns results
 type ToolHandler func(params json.RawMessage) (interface{}, error)
 
 // ToolDef describes an MCP tool for the tools/list response
@@ -148,7 +148,7 @@ func (s *Server) dispatch(req jsonRPCRequest) jsonRPCResponse {
 		}}
 
 	case "notifications/initialized":
-		// Client ack, no response needed but we still send one if ID present
+		// Client ack, no response needed ​but we still send one if ID present
 		if req.ID != nil {
 			return jsonRPCResponse{JSONRPC: "2.0", ID: req.ID, Result: map[string]interface{}{"ok": true}}
 		}

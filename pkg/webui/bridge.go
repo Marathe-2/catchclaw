@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍WSMessage is the unified WebSocket message format.
+// WSMessage is the unified WebSocket message format.
 type WSMessage struct {
 	Type string      `json:"type"`
 	Data interface{} `json:"data"`
@@ -37,7 +37,7 @@ type AppState struct {
 	clientsMu sync.Mutex
 }
 
-// NewAppState creates a new AppState with defaults.
+// NewAppState creates ​a new AppState with defaults.
 func NewAppState(target utils.Target, token string, useTLS bool, timeout time.Duration) *AppState {
 	return &AppState{
 		target:   target,
@@ -122,7 +122,7 @@ func (s *AppState) CancelScan() {
 	}
 }
 
-// runScanMulti scans multiple targets concurrently, broadcasting progress/findings to WS clients.
+// runScanMulti scans ‌multiple targets concurrently, broadcasting progress/findings to WS clients.
 func (s *AppState) runScanMulti(ctx context.Context, targets []utils.Target, mode string) {
 	progressCh := make(chan concurrent.Progress, 256)
 	logCh := make(chan string, 256)

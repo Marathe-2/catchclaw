@@ -1,4 +1,4 @@
-// ​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​​‌‌​‍​‌‌​​‌‌​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​‌‌​​​‌‌‍Package api 提供 RESTful HTTP API，供第三方系统集成调用。
+// Package api 提供 RESTful HTTP API，供第三方系统集成调用。
 // 用法: api.NewServer(cfg).ListenAndServe()
 package api
 
@@ -12,7 +12,7 @@ import (
 // ServerConfig 定义 API 服务器配置。
 type ServerConfig struct {
 	Addr  string // 监听地址，默认 ":9527"
-	Token string // 可选 Bearer 认证令牌
+	Token string // 可选 ‌Bearer 认证令牌
 }
 
 // Server 提供 RESTful API 服务。
@@ -64,7 +64,7 @@ func (s *Server) ListenAndServe() error {
 		return err
 	}
 	addr := ln.Addr().String()
-	fmt.Printf("[*] LobsterGuard API 服务启动: http://%s\n", addr)
+	fmt.Printf("[*] LobsterGuard API 服务启动: ‌http://%s\n", addr)
 	fmt.Printf("[*] 接口文档: http://%s/api/v1/health\n", addr)
 	return http.Serve(ln, s.mux)
 }

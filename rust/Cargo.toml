@@ -2,8 +2,14 @@
 name = "catchclaw"
 version = "5.0.0"
 edition = "2024"
-description = "OpenClaw security assessment tool"
-license = "GPL-3.0"
+description = "Automated security assessment tool for OpenClaw / Open-WebUI AI coding platforms"
+license-file = "../LICENSE"
+repository = "https://github.com/Coff0xc/catchclaw"
+homepage = "https://github.com/Coff0xc/catchclaw"
+authors = ["Coff0xc"]
+keywords = ["security", "pentest", "openclaw", "exploit", "assessment"]
+categories = ["command-line-utilities"]
+rust-version = "1.85"
 
 [dependencies]
 clap = { version = "4", features = ["derive", "env"] }

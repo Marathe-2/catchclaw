@@ -7,6 +7,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [5.1.0] - 2026-03-24
 
 ### Added
+- **7 CVE-targeted exploit modules** from 2026 threat intelligence:
+  - `gateway_hijack` — CVE-2026-25253 (CVSS 8.8) gatewayURL WebSocket hijacking
+  - `safebins_bypass` — CVE-2026-28363 (CVSS 9.9) GNU long-option abbreviation bypass
+  - `ws_auth_brute` — CVE-2026-32025 WebSocket auth brute-force
+  - `localhost_trust` — ClawJacked localhost implicit trust bypass
+  - `guest_mode_abuse` — Guest Mode dangerous endpoint exposure
+  - `mdns_leak` — mDNS/HTTP configuration parameter leakage
+  - `skill_supply_chain` — ClawHavoc campaign malicious skill detection
+- **CVE-specific payload library** — `payloads/cve_specific.yaml` with 8 targeted categories
 - **Multi-target scanning** — CIDR notation (/24, /16), IP range (start-end), comma-separated targets, target file (`-f targets.txt`)
 - **Port scanning & service discovery** — TCP connect scan with OpenClaw fingerprinting across common ports (80, 443, 3000, 8080, etc.)
 - **Comprehensive payload library** — 5 external YAML files with 200+ payloads: SSRF (AWS/GCP/Azure/DO metadata, IP bypass, protocol smuggling), command injection, prompt injection (DAN, jailbreak, extraction), auth bypass, XSS

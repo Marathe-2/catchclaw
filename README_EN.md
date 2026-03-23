@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Automated Security Assessment Tool for OpenClaw / Open-WebUI AI Coding Platforms</b><br>
-  <sub>59 DAG Attack Chains | 59 Exploit Modules | ATT&CK Phase Mapping | Async Tokio Engine | Attack Graph Visualization</sub>
+  <sub>66 DAG Attack Chains | 66 Exploit Modules | ATT&CK Phase Mapping | Async Tokio Engine | Attack Graph Visualization</sub>
 </p>
 
 <p align="center">
@@ -24,9 +24,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Version-5.1.0-blue?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Rust-Edition_2024-DEA584?style=flat-square&logo=rust&logoColor=white" alt="Rust">
-  <img src="https://img.shields.io/badge/DAG_Chains-59-FF6B6B?style=flat-square" alt="Chains">
+  <img src="https://img.shields.io/badge/DAG_Chains-66-FF6B6B?style=flat-square" alt="Chains">
   <img src="https://img.shields.io/badge/Async-Tokio-4CAF50?style=flat-square" alt="Tokio">
-  <img src="https://img.shields.io/badge/Exploits-59_Modules-orange?style=flat-square" alt="Exploits">
+  <img src="https://img.shields.io/badge/Exploits-66_Modules-orange?style=flat-square" alt="Exploits">
   <img src="https://img.shields.io/badge/License-Non--Commercial--v2.0-green?style=flat-square" alt="License">
 </p>
 
@@ -58,7 +58,7 @@
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                          CatchClaw v5.1.0                                │
 ├────────────────────────────────────────────────────────────────────────────┤
-│  ● 59 DAG Attack Chains  ● 59 Exploit Modules   ● Async Tokio Engine    │
+│  ● 66 DAG Attack Chains  ● 66 Exploit Modules   ● Async Tokio Engine    │
 │  ● ATT&CK 9-Phase Map   ● Mermaid Attack Graph  ● JSON/HTML/MD Reports  │
 │  ● Kahn Topological Sort ● Semaphore Concurrency ● Condition/Fallback    │
 │  ● Multi-Target (CIDR)  ● Port Scan / Discovery ● 200+ External Payloads│
@@ -78,7 +78,7 @@
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [CLI Usage](#cli-usage)
-- [59 Exploit Modules](#59-exploit-modules)
+- [66 Exploit Modules](#59-exploit-modules)
 - [DAG Attack Chain Architecture](#dag-attack-chain-architecture)
 - [Nuclei Templates](#nuclei-templates)
 - [Project Structure](#project-structure)
@@ -114,8 +114,8 @@ Built on Tokio async runtime, the DAG engine uses Kahn's topological sort for le
 
 ### Attack Engine
 
-- **59 Exploit Modules** — 10 categories, `inventory` macro auto-registration
-- **59 DAG Attack Chains** — 9 ATT&CK phases, automated orchestration
+- **66 Exploit Modules** — 10 categories, `inventory` macro auto-registration
+- **66 DAG Attack Chains** — 9 ATT&CK phases, automated orchestration
 - **Kahn Topological Sort** — Level-by-level concurrent execution with dependency resolution
 - **Condition/Fallback Nodes** — Dynamic path decisions based on prior results
 - **Attack Graph Visualization** — Mermaid export with hit/skip/fallback status
@@ -266,7 +266,7 @@ Exploit Flags:
 
 ---
 
-## 59 Exploit Modules
+## 66 Exploit Modules
 
 Grouped by ATT&CK phase and attack category:
 
@@ -363,6 +363,18 @@ Grouped by ATT&CK phase and attack category:
 | flood_guard_reset | Config | Flood guard reset |
 | webhook_verify | Config | Webhook verification bypass |
 | skill_scanner_bypass | Config | Skill scanner bypass |
+
+### CVE-Targeted Modules (2026 Threat Intelligence)
+
+| Module | CVE / Source | Description |
+|--------|-------------|-------------|
+| gateway_hijack | CVE-2026-25253 | gatewayURL WebSocket hijacking → token theft |
+| safebins_bypass | CVE-2026-28363 | GNU long-option abbreviation safeBins bypass → RCE |
+| ws_auth_brute | CVE-2026-32025 | WebSocket auth brute-force + localhost rate limit exempt |
+| localhost_trust | ClawJacked | Localhost implicit trust authentication bypass |
+| guest_mode_abuse | Conscia audit | Guest Mode dangerous API endpoint exposure |
+| mdns_leak | Conscia audit | mDNS/HTTP configuration parameter leakage |
+| skill_supply_chain | ClawHavoc | Malicious skill supply chain attack detection (AMOS) |
 
 ---
 

@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Automatisiertes Sicherheitsbewertungstool für OpenClaw / Open-WebUI AI-Codierungsplattformen</b><br>
-  <sub>59 DAG-Angriffsketten | 59 Exploit-Module | ATT&CK-Phasenzuordnung | Async Tokio-Engine | Angriffsgraph-Visualisierung</sub>
+  <sub>66 DAG-Angriffsketten | 66 Exploit-Module | ATT&CK-Phasenzuordnung | Async Tokio-Engine | Angriffsgraph-Visualisierung</sub>
 </p>
 
 <p align="center">
@@ -24,9 +24,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Version-5.1.0-blue?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/Rust-Edition_2024-DEA584?style=flat-square&logo=rust&logoColor=white" alt="Rust">
-  <img src="https://img.shields.io/badge/DAG_Chains-59-FF6B6B?style=flat-square" alt="Chains">
+  <img src="https://img.shields.io/badge/DAG_Chains-66-FF6B6B?style=flat-square" alt="Chains">
   <img src="https://img.shields.io/badge/Async-Tokio-4CAF50?style=flat-square" alt="Tokio">
-  <img src="https://img.shields.io/badge/Exploits-59_Modules-orange?style=flat-square" alt="Exploits">
+  <img src="https://img.shields.io/badge/Exploits-66_Modules-orange?style=flat-square" alt="Exploits">
   <img src="https://img.shields.io/badge/License-Non--Commercial--v2.0-green?style=flat-square" alt="License">
 </p>
 
@@ -58,7 +58,7 @@
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                          CatchClaw v5.1.0                                │
 ├────────────────────────────────────────────────────────────────────────────┤
-│  ● 59 DAG-Angriffsketten ● 59 Exploit-Module    ● Async Tokio-Engine    │
+│  ● 66 DAG-Angriffsketten ● 66 Exploit-Module    ● Async Tokio-Engine    │
 │  ● ATT&CK 9-Phasen-Map  ● Mermaid-Angriffsgraph ● JSON/HTML/MD-Berichte│
 │  ● Kahn Topologische Sort. ● Semaphore-Nebenläuf. ● Bedingung/Fallback  │
 │  ● Multi-Target (CIDR)  ● Port-Scan / Erkennung ● 200+ externe Payloads│
@@ -78,7 +78,7 @@
 - [Installation](#installation)
 - [Schnellstart](#schnellstart)
 - [CLI-Verwendung](#cli-verwendung)
-- [59 Exploit-Module](#59-exploit-module)
+- [66 Exploit-Module](#59-exploit-module)
 - [DAG-Angriffsketten-Architektur](#dag-angriffsketten-architektur)
 - [Nuclei-Vorlagen](#nuclei-vorlagen)
 - [Projektstruktur](#projektstruktur)
@@ -88,7 +88,7 @@
 
 ## Überblick
 
-**CatchClaw** ist ein Rust-basiertes automatisiertes Sicherheitsbewertungstool für [OpenClaw](https://github.com/anthropics/open-claw) / Open-WebUI AI-Coding-Agent-Plattformen. Es orchestriert 59 Exploit-Module durch eine DAG (Directed Acyclic Graph) Angriffskette und deckt den gesamten ATT&CK-Lebenszyklus von der Aufklärung bis zur Datenexfiltration ab.
+**CatchClaw** ist ein Rust-basiertes automatisiertes Sicherheitsbewertungstool für [OpenClaw](https://github.com/anthropics/open-claw) / Open-WebUI AI-Coding-Agent-Plattformen. Es orchestriert 66 Exploit-Module durch eine DAG (Directed Acyclic Graph) Angriffskette und deckt den gesamten ATT&CK-Lebenszyklus von der Aufklärung bis zur Datenexfiltration ab.
 
 Basierend auf der Tokio-Async-Runtime verwendet die DAG-Engine Kahns topologische Sortierung für ebenenweise parallele Ausführung mit Semaphore-begrenzter Nebenläufigkeit, bedingter Ausführung und Fallback-Knoten. Angriffsergebnisse werden als Mermaid-Flussdiagramme visualisiert.
 
@@ -102,8 +102,8 @@ Basierend auf der Tokio-Async-Runtime verwendet die DAG-Engine Kahns topologisch
 
 ### Angriffs-Engine
 
-- **59 Exploit-Module** — 10 Kategorien, automatische `inventory`-Makro-Registrierung
-- **59 DAG-Angriffsketten** — 9 ATT&CK-Phasen, automatisierte Orchestrierung
+- **66 Exploit-Module** — 10 Kategorien, automatische `inventory`-Makro-Registrierung
+- **66 DAG-Angriffsketten** — 9 ATT&CK-Phasen, automatisierte Orchestrierung
 - **Kahn Topologische Sortierung** — Ebenenweise parallele Ausführung mit Abhängigkeitsauflösung
 - **Bedingungs-/Fallback-Knoten** — Dynamische Pfadentscheidungen basierend auf vorherigen Ergebnissen
 - **Angriffsgraph-Visualisierung** — Mermaid-Export mit Treffer/Skip/Fallback-Status
@@ -246,7 +246,7 @@ Exploit Flags:
 
 ---
 
-## 59 Exploit-Module
+## 66 Exploit-Module
 
 Nach ATT&CK-Phase und Angriffskategorie:
 

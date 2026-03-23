@@ -65,6 +65,25 @@ impl PayloadRegistry {
     pub fn has_category(&self, category: &str) -> bool {
         self.payloads.contains_key(category)
     }
+
+    /// Load and merge all YAML files from a directory
+    pub fn from_directory(dir: &Path) -> Result<Self, String> {
+        if !dir.is_dir() {
+            return Err(format!("{} is not a directory", dir.display()));
+        }
+        let mut registry = Self::default();
+        let entries = std::fs::read_dir(dir)
+            .map_err(|e| format!("Failed to read directory {}: {}", dir.display(), e))?;
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.extension().map_or(false, |e| e == "yaml" || e == "yml") {
+                if let Ok(file_reg) = Self::from_file(&path) {
+                    registry.merge(file_reg);
+                }
+            }
+        }
+        Ok(registry)
+    }
 }
 
 #[cfg(test)]

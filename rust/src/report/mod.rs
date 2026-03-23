@@ -273,13 +273,58 @@ mod tests {
     fn test_write_json() {
         let result = make_test_result();
         let path = std::env::temp_dir().join("catchclaw_test_report.json");
-        
+
         assert!(write_json(&result, &path).is_ok());
-        
+
         let content = std::fs::read_to_string(&path).unwrap();
         assert!(content.contains("\"findings\""));
         assert!(content.contains("\"summary\""));
-        
+
         let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn test_summary_all_severities() {
+        let mut result = ScanResult::new(Target::new("10.0.0.1", 443));
+        result.add(Finding::new("t", "m", "a", Severity::Critical, "d"));
+        result.add(Finding::new("t", "m", "b", Severity::High, "d"));
+        result.add(Finding::new("t", "m", "c", Severity::Medium, "d"));
+        result.add(Finding::new("t", "m", "d", Severity::Low, "d"));
+        result.add(Finding::new("t", "m", "e", Severity::Info, "d"));
+        result.done();
+        let s = ScanSummary::from_result(&result);
+        assert_eq!(s.total_findings, 5);
+        assert_eq!(s.critical, 1);
+        assert_eq!(s.high, 1);
+        assert_eq!(s.medium, 1);
+        assert_eq!(s.low, 1);
+        assert_eq!(s.info, 1);
+    }
+
+    #[test]
+    fn test_summary_empty() {
+        let mut result = ScanResult::new(Target::new("10.0.0.1", 443));
+        result.done();
+        let s = ScanSummary::from_result(&result);
+        assert_eq!(s.total_findings, 0);
+        assert_eq!(s.risk_score, 0);
+    }
+
+    #[test]
+    fn test_risk_score_capped() {
+        let mut result = ScanResult::new(Target::new("10.0.0.1", 443));
+        for i in 0..20 {
+            result.add(Finding::new("t", "m", &format!("crit{i}"), Severity::Critical, "d"));
+        }
+        result.done();
+        let s = ScanSummary::from_result(&result);
+        assert!(s.risk_score <= 100);
+    }
+
+    #[test]
+    fn test_write_json_invalid_path() {
+        let result = make_test_result();
+        let path = std::path::Path::new("/nonexistent/dir/report.json");
+        assert!(write_json(&result, path).is_err());
     }
 }
